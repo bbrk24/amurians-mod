@@ -1,0 +1,23 @@
+{
+    "schemaVersion": 1,
+    "id": "amurians",
+    "version": "${version}",
+    "name": "Amurians",
+    "description": "Adds Amurians to Minecraft",
+    "authors": [
+        "bbrk24"
+    ],
+    "license": "MIT",
+    "environment": "*",
+    "entrypoints": {
+        "main": [
+            "org.bbrk24.amurians.Initializer"
+        ]
+    },
+    "depends": {
+        "fabricloader": ">=0.14.8",
+        "fabric": "*",
+        "minecraft": "1.19",
+        "java": ">=17"
+    }
+}
