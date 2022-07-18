@@ -1,4 +1,9 @@
 {
     "block.amurians.ruby_block": "Block of Ruby",
-    "item.amurians.ruby": "Ruby"
+    "item.amurians.ruby": "Ruby",
+    "item.amurians.ruby_boots": "Ruby Boots",
+    "item.amurians.ruby_chestplate": "Ruby Chestplate",
+    "item.amurians.ruby_helmet": "Ruby Helmet",
+    "item.amurians.ruby_leggings": "Ruby Leggings",
+    "item.amurians.ruby_shard": "Ruby Shard"
 }
