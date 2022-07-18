@@ -4,16 +4,10 @@
     "version": "${version}",
     "name": "Amurians",
     "description": "Adds Amurians to Minecraft",
-    "authors": [
-        "bbrk24"
-    ],
+    "authors": ["bbrk24"],
     "license": "MIT",
     "environment": "*",
-    "entrypoints": {
-        "main": [
-            "org.bbrk24.amurians.Initializer"
-        ]
-    },
+    "entrypoints": { "main": ["org.bbrk24.amurians.Initializer"] },
     "depends": {
         "fabricloader": ">=0.14.8",
         "fabric": "*",

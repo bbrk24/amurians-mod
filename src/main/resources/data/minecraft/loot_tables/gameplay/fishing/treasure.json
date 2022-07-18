@@ -4,24 +4,14 @@
         {
             "bonus_rolls": 0,
             "entries": [
-                {
-                    "type": "minecraft:item",
-                    "name": "minecraft:name_tag"
-                },
-                {
-                    "type": "minecraft:item",
-                    "name": "minecraft:saddle"
-                },
+                { "type": "minecraft:item", "name": "minecraft:name_tag" },
+                { "type": "minecraft:item", "name": "minecraft:saddle" },
                 {
                     "type": "minecraft:item",
                     "functions": [
                         {
                             "add": false,
-                            "damage": {
-                                "type": "minecraft:uniform",
-                                "max": 0.25,
-                                "min": 0.0
-                            },
+                            "damage": { "type": "minecraft:uniform",  "max": 0.25, "min": 0 },
                             "function": "minecraft:set_damage"
                         },
                         {
@@ -37,11 +27,7 @@
                     "functions": [
                         {
                             "add": false,
-                            "damage": {
-                                "type": "minecraft:uniform",
-                                "max": 0.25,
-                                "min": 0
-                            },
+                            "damage": { "type": "minecraft:uniform", "max": 0.25, "min": 0 },
                             "function": "minecraft:set_damage"
                         },
                         {
@@ -63,10 +49,7 @@
                     ],
                     "name": "minecraft:book"
                 },
-                {
-                    "type": "minecraft:item",
-                    "name": "minecraft:nautilus_shell"
-                },
+                { "type": "minecraft:item", "name": "minecraft:nautilus_shell" },
                 {
                     "type": "minecraft:item",
                     "conditions": [
@@ -75,27 +58,19 @@
                             "terms": [
                                 {
                                     "condition": "minecraft:location_check",
-                                    "predicate": {
-                                        "biome": "minecraft:snowy_beach"
-                                    }
+                                    "predicate": { "biome": "minecraft:snowy_beach" }
                                 },
                                 {
                                     "condition": "minecraft:location_check",
-                                    "predicate": {
-                                        "biome": "minecraft:beach"
-                                    }
+                                    "predicate": { "biome": "minecraft:beach" }
                                 },
                                 {
                                     "condition": "minecraft:location_check",
-                                    "predicate": {
-                                        "biome": "minecraft:river"
-                                    }
+                                    "predicate": { "biome": "minecraft:river" }
                                 },
                                 {
                                     "condition": "minecraft:location_check",
-                                    "predicate": {
-                                        "biome": "minecraft:frozen_river"
-                                    }
+                                    "predicate": { "biome": "minecraft:frozen_river" }
                                 }
                             ]
                         }
