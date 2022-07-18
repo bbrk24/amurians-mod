@@ -1,0 +1,5 @@
+{
+    "type": "minecraft:crafting_shapeless",
+    "ingredients": [{ "item": "amurians:ruby_block" }],
+    "result": { "item": "amurians:ruby", "count": 9 }
+}

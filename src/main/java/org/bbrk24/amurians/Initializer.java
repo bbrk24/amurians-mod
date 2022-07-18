@@ -31,7 +31,7 @@ public class Initializer implements ModInitializer {
         Registry.register(
             Registry.ITEM,
             new Identifier("amurians", "ruby_block"),
-            new BlockItem(RUBY_BLOCK, new FabricItemSettings().group(ItemGroup.MISC))
+            new BlockItem(RUBY_BLOCK, new FabricItemSettings().group(ItemGroup.BUILDING_BLOCKS))
         );
 
         Registry.register(
