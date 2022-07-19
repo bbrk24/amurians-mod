@@ -3,9 +3,14 @@ package org.bbrk24.amurians;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
+import net.fabricmc.fabric.api.object.builder.v1.entity.FabricDefaultAttributeRegistry;
+import net.fabricmc.fabric.api.object.builder.v1.entity.FabricEntityTypeBuilder;
 import net.minecraft.block.Block;
 import net.minecraft.block.Material;
+import net.minecraft.entity.EntityDimensions;
+import net.minecraft.entity.EntityType;
 import net.minecraft.entity.EquipmentSlot;
+import net.minecraft.entity.SpawnGroup;
 import net.minecraft.item.ArmorItem;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
@@ -41,6 +46,14 @@ public class Initializer implements ModInitializer {
         FabricBlockSettings.of(Material.METAL)
             .strength(5.0f, 6.0f)
             .requiresTool()
+    );
+
+    public static final EntityType<AmurianEntity> AMURIAN = Registry.register(
+        Registry.ENTITY_TYPE,
+        new Identifier("amurians", "amurian"),
+        FabricEntityTypeBuilder.create(SpawnGroup.CREATURE, AmurianEntity::new)
+            .dimensions(EntityDimensions.fixed(0.6f, 1.8f))
+            .build()
     );
 
     @Override
@@ -87,5 +100,7 @@ public class Initializer implements ModInitializer {
             new Identifier("amurians", "ruby_boots"),
             RUBY_BOOTS
         );
+
+        FabricDefaultAttributeRegistry.register(AMURIAN, AmurianEntity.createAmurianAttributes());
     }
 }
