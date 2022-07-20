@@ -1,10 +1,11 @@
 package org.bbrk24.amurians;
 
-import java.util.UUID;
 import org.jetbrains.annotations.Nullable;
+
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.ExperienceOrbEntity;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.goal.ActiveTargetGoal;
 import net.minecraft.entity.ai.goal.AttackGoal;
 import net.minecraft.entity.ai.goal.EscapeDangerGoal;
@@ -23,10 +24,21 @@ import net.minecraft.entity.attribute.EntityAttributeModifier;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.mob.Angerable;
 import net.minecraft.entity.mob.CreeperEntity;
+import net.minecraft.entity.mob.DrownedEntity;
 import net.minecraft.entity.mob.MobEntity;
+import net.minecraft.entity.mob.Monster;
+import net.minecraft.entity.mob.PillagerEntity;
+import net.minecraft.entity.mob.RavagerEntity;
+import net.minecraft.entity.mob.SpellcastingIllagerEntity;
+import net.minecraft.entity.mob.VindicatorEntity;
+import net.minecraft.entity.mob.ZoglinEntity;
 import net.minecraft.entity.mob.ZombieEntity;
+import net.minecraft.entity.mob.ZombifiedPiglinEntity;
+import net.minecraft.entity.passive.IronGolemEntity;
 import net.minecraft.entity.passive.MerchantEntity;
+import net.minecraft.entity.passive.PandaEntity;
 import net.minecraft.entity.passive.PassiveEntity;
+import net.minecraft.entity.passive.PufferfishEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ArmorItem;
 import net.minecraft.item.BowItem;
@@ -44,22 +56,19 @@ import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.TimeHelper;
 import net.minecraft.util.math.intprovider.UniformIntProvider;
+import net.minecraft.util.math.random.Random;
 import net.minecraft.village.TradeOffer;
 import net.minecraft.village.TradeOfferList;
 import net.minecraft.world.World;
 
-// Bug list:
-// - won't pick up food (ergo, can't test eat goal)
-// - won't walk towards items
-// - won't trade sword for tool
-// - doesn't save/despawns when world closes
+// - custom canEquip not called [bug]
+// - won't walk towards items [missing feature]
+// - doesn't correctly call for help [bug]
 
-public class AmurianEntity extends MerchantEntity implements Angerable {
-    private static final UniformIntProvider ANGER_TIME_RANGE = TimeHelper.betweenSeconds(1, 5);
+public class AmurianEntity extends MerchantEntity {
     private static final double MAX_SPEED = 0.5;
     private static final double WANDER_SPEED = 0.35;
-    private UUID angryAt = null;
-    private int angryTime = 0;
+    private float lastActionableDamage = 0.0f;
 
     public AmurianEntity(EntityType<? extends AmurianEntity> entityType, World world) {
         super(entityType, world);
@@ -126,7 +135,8 @@ public class AmurianEntity extends MerchantEntity implements Angerable {
         return MobEntity.createMobAttributes()
             .add(EntityAttributes.GENERIC_MAX_HEALTH, 18.0)
             .add(EntityAttributes.GENERIC_ATTACK_DAMAGE, 1.5)
-            .add(EntityAttributes.GENERIC_MOVEMENT_SPEED, WANDER_SPEED);
+            .add(EntityAttributes.GENERIC_MOVEMENT_SPEED, WANDER_SPEED)
+            .add(EntityAttributes.GENERIC_FOLLOW_RANGE, 16.0);
     }
     
     @Override
@@ -152,47 +162,66 @@ public class AmurianEntity extends MerchantEntity implements Angerable {
     @Override
     protected void initGoals() {
         this.goalSelector.add(0, new SwimGoal(this));
-        this.goalSelector.add(1, new FleeEntityGoal<>(this, CreeperEntity.class, 3.0f, MAX_SPEED, MAX_SPEED));
+        this.goalSelector.add(1, new FleeEntityGoal<>(this, CreeperEntity.class, 3.0f, WANDER_SPEED, MAX_SPEED));
         this.goalSelector.add(1, new AmurianEscapeDangerGoal(this));
-        this.goalSelector.add(2, new AttackGoal(this));
-        this.goalSelector.add(3, new StopFollowingCustomerGoal(this));
-        this.goalSelector.add(3, new LookAtCustomerGoal(this));
-        this.goalSelector.add(4, new AmurianEatGoal(this));
-        this.goalSelector.add(5, new WanderAroundFarGoal(this, WANDER_SPEED));
-        this.goalSelector.add(6, new StopAndLookAtEntityGoal(this, PlayerEntity.class, 3.0f, 1.0f));
-        this.targetSelector.add(1, new RevengeGoal(this, new Class[0]));
-        this.targetSelector.add(2, new ActiveTargetGoal<>(this, ZombieEntity.class, true, true));
+        this.goalSelector.add(2, new AmurianAttackGoal(this));
+        // The FleeEntityGoal for ZoglinEntity is lower priority than the AttackGoal, so they flee
+        // until the Zoglin lands an attack.
+        this.goalSelector.add(3, new FleeEntityGoal<>(this, ZoglinEntity.class, 16.0f, WANDER_SPEED, MAX_SPEED));
+        this.goalSelector.add(4, new StopFollowingCustomerGoal(this));
+        this.goalSelector.add(4, new LookAtCustomerGoal(this));
+        this.goalSelector.add(5, new AmurianEatGoal(this));
+        this.goalSelector.add(6, new WanderAroundFarGoal(this, WANDER_SPEED));
+        this.goalSelector.add(7, new StopAndLookAtEntityGoal(this, PlayerEntity.class, 3.0f, 1.0f));
+        this.targetSelector.add(
+            1,
+            new AmurianRevengeGoal(this, AmurianEntity.class, IronGolemEntity.class)
+                .setGroupRevenge()
+        );
+        this.targetSelector.add(2, new ActiveTargetGoal<>(this, RavagerEntity.class, false, true));
+        this.targetSelector.add(2, new ActiveTargetGoal<>(this, PillagerEntity.class, false));
+        this.targetSelector.add(2, new ActiveTargetGoal<>(this, SpellcastingIllagerEntity.class, false));
+        this.targetSelector.add(2, new ActiveTargetGoal<>(this, VindicatorEntity.class, false, true));
+        this.targetSelector.add(
+            3,
+            new ActiveTargetGoal<>(
+                this,
+                ZombieEntity.class,
+                10,
+                true,
+                true,
+                (zombie) -> !(zombie instanceof ZombifiedPiglinEntity || zombie instanceof DrownedEntity)
+            )
+        );
+    }
+    
+    @Override
+    public void setAttacker(LivingEntity attacker) {
+        if (
+            attacker != null &&
+            (attacker != this.getAttacker() || this.lastDamageTaken > this.lastActionableDamage)
+        ) {
+            this.lastActionableDamage = this.lastDamageTaken;
+            this.setTarget(attacker);
+        }
+        super.setAttacker(attacker);
     }
 
     @Override
-    public int getAngerTime() {
-        return this.angryTime;
-    }
-
-    @Override
-    public void setAngerTime(int angerTime) {
-        this.angryTime = angerTime;
-    }
-
-    @Override
-    public UUID getAngryAt() {
-        return angryAt;
-    }
-
-    @Override
-    public void setAngryAt(UUID uuid) {
-        this.angryAt = uuid;
-    }
-
-    @Override
-    public void chooseRandomAngerTime() {
-        setAngerTime(ANGER_TIME_RANGE.get(random));
-    }
-
-    @Override
-    protected void mobTick() {
-        this.tickAngerLogic((ServerWorld)this.world, false);
-        super.mobTick();
+    public boolean tryEquip(ItemStack equipment) {
+        EquipmentSlot equipmentSlot = AmurianEntity.getPreferredEquipmentSlot(equipment);
+        ItemStack itemStack = getEquippedStack(equipmentSlot);
+        if (prefersNewEquipment(equipment, itemStack) && this.canPickupItem(equipment)) {
+            if (
+                !itemStack.isEmpty() &&
+                    Math.max(this.random.nextDouble() - 0.1, 0.0) < getDropChance(equipmentSlot)
+            ) {
+                dropStack(itemStack);
+            }
+            equipLootStack(equipmentSlot, equipment);
+            return true;
+        }
+        return false;
     }
 
     @Override
@@ -296,52 +325,140 @@ public class AmurianEntity extends MerchantEntity implements Angerable {
         }
     }
 
-    static class AmurianEatGoal extends Goal {
-        /** How long it takes to eat something, in seconds */
-        private static float EAT_TIME_SECONDS = 1.6f;
-        private AmurianEntity mob;
-        private byte eatingTicks = 0;
+    static class AmurianAttackGoal extends AttackGoal {
+        protected AmurianEntity mob;
 
-        public AmurianEatGoal(AmurianEntity mob) {
+        public AmurianAttackGoal(AmurianEntity mob) {
+            super(mob);
             this.mob = mob;
-        }
-
-        private float getEatingDuration() {
-            if (mob.getOffHandStack().isEmpty() || !mob.getOffHandStack().getItem().isFood()) {
-                return 0.0f;
-            }
-            return (float)eatingTicks *
-                (mob.getOffHandStack().getItem().getFoodComponent().isSnack() ? 20.0f : 10.0f);
         }
 
         @Override
         public boolean canStart() {
-            // taken at least 1.5 hearts damage and holding food in offhand
-            return mob.getHealth() <= 15.0f &&
+            if (this.mob.isBaby()) {
+                return false;
+            }
+            return super.canStart();
+        }
+    }
+
+    static class AmurianEatGoal extends Goal {
+        private AmurianEntity mob;
+
+        public AmurianEatGoal(AmurianEntity mob) {
+            super();
+            this.mob = mob;
+        }
+
+        /** Whether it is possible to eat, regardless of whether the mob is currently eating */
+        private boolean canEat() {
+            return mob.getMaxHealth() - mob.getHealth() >= 3.0f &&
                 !mob.getOffHandStack().isEmpty() &&
-                mob.getOffHandStack().getItem().isFood();
+                mob.getOffHandStack().getItem().isFood() &&
+                mob.getTarget() == null;
+        }
+
+        @Override
+        public boolean canStart() {
+            return canEat() && mob.itemUseTimeLeft == 0;
+        }
+
+        @Override
+        public boolean shouldRunEveryTick() {
+            return true;
         }
 
         @Override
         public void start() {
-            this.eatingTicks = 0;
+            ItemStack offhandStack = this.mob.getOffHandStack();
+            this.mob.itemUseTimeLeft = offhandStack.getMaxUseTime();
+            this.mob.activeItemStack = offhandStack;
+            this.mob.setCurrentHand(Hand.OFF_HAND);
+            this.mob.navigation.stop();
         }
         
         @Override
         public void tick() {
-            ++eatingTicks;
             ItemStack foodStack = mob.getOffHandStack();
-            mob.tickItemStackUsage(foodStack);
-            if (getEatingDuration() >= EAT_TIME_SECONDS) {
+            if (this.mob.itemUseTimeLeft == 1) {
                 FoodComponent food = foodStack.getItem().getFoodComponent();
+                foodStack.decrement(1);
                 mob.heal(food.getHunger());
-                mob.eatFood(mob.world, foodStack);
             }
         }
 
         @Override
+        public void stop() {
+            mob.clearActiveItem();
+        }
+
+        @Override
         public boolean shouldContinue() {
-            return canStart() && getEatingDuration() < EAT_TIME_SECONDS;
+            return canEat() && this.mob.itemUseTimeLeft > 0;
+        }
+    }
+
+    static class AmurianRevengeGoal extends RevengeGoal {
+        private static final UniformIntProvider ANGER_TIME_RANGE = TimeHelper.betweenSeconds(1, 5);
+        protected final Random random = Random.create();
+        protected int ticksRemaining = 0;
+
+        public AmurianRevengeGoal(AmurianEntity mob, Class<?>... noRevengeTypes) {
+            super(mob, noRevengeTypes);
+        }
+
+        @Override
+        protected void setMobEntityTarget(MobEntity mob, LivingEntity target) {
+            if (mob instanceof AmurianEntity) {
+                ((AmurianEntity)mob).lastActionableDamage = ((AmurianEntity)this.mob).lastActionableDamage;
+            }
+            super.setMobEntityTarget(mob, target);
+        }
+        
+        @Override
+        public void start() {
+            AmurianEntity amurian = (AmurianEntity)this.mob;
+            int baseTime = ANGER_TIME_RANGE.get(this.random);
+            this.ticksRemaining = 1 + (int)Math.floor(amurian.lastActionableDamage * (float)baseTime);
+        }
+
+        /** 
+         * Whether a mob is guaranteed to continue attacking.
+         */
+        private boolean isPersistentAttacker(LivingEntity entity) {
+            if (entity instanceof PandaEntity) {
+                return ((PandaEntity)entity).isAttacking();
+            }
+            if (
+                entity instanceof Monster ||
+                entity instanceof Angerable ||
+                entity instanceof PufferfishEntity
+            ) {
+                return true;
+            }
+            return false;
+        }
+
+        @Override
+        public boolean shouldContinue() {
+            if (!isPersistentAttacker(this.target) && this.ticksRemaining == 0) {
+                return false;
+            }
+            return super.shouldContinue();
+        }
+
+        @Override
+        public void stop() {
+            this.mob.setAttacker(null);
+            super.stop();
+        }
+
+        @Override
+        public void tick() {
+            super.tick();
+            if (this.ticksRemaining > 0) {
+                --this.ticksRemaining;
+            }
         }
     }
 }

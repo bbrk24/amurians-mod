@@ -1,5 +1,8 @@
 package org.bbrk24.amurians;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
@@ -19,6 +22,8 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 
 public class Initializer implements ModInitializer {
+    public static final Logger LOGGER = LoggerFactory.getLogger("amurians");
+
     public static final Item RUBY = new Item(new FabricItemSettings().group(ItemGroup.MISC));
     public static final Item RUBY_SHARD = new Item(new FabricItemSettings().group(ItemGroup.MISC));
     public static final Item RUBY_HELMET = new ArmorItem(
