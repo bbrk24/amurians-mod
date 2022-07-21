@@ -136,7 +136,9 @@ public class Initializer implements ModInitializer {
             new Identifier("amurians", "emery_table"),
             EMERY_TABLE_SCREEN_HANDLER_TYPE
         );
-        assert EMERY_TABLE_RECIPE_TYPE != null;
+        // We need to use this inside this method, to ensure the register call is made before the
+        // method returns. However, I don't have anything to do with it, so just assert that it
+        // exists.
         assert EMERY_TABLE_RECIPE_SERIALIZER != null;
     }
 }

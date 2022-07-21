@@ -43,7 +43,11 @@ public class EmeryTableScreenHandler extends ScreenHandler {
         this(syncId, playerInventory, ScreenHandlerContext.EMPTY);
     }
 
-    public EmeryTableScreenHandler(int syncId, PlayerInventory playerInventory, final ScreenHandlerContext context) {
+    public EmeryTableScreenHandler(
+        int syncId,
+        PlayerInventory playerInventory, 
+        final ScreenHandlerContext context
+    ) {
         super(ScreenHandlerType.STONECUTTER, syncId);
         int i;
         this.context = context;
@@ -146,7 +150,8 @@ public class EmeryTableScreenHandler extends ScreenHandler {
 
     void populateResult() {
         if (!this.availableRecipes.isEmpty() && this.isInBounds(this.selectedRecipe.get())) {
-            EmeryTableRecipe stonecuttingRecipe = this.availableRecipes.get(this.selectedRecipe.get());
+            EmeryTableRecipe stonecuttingRecipe =
+                this.availableRecipes.get(this.selectedRecipe.get());
             this.output.setLastRecipe(stonecuttingRecipe);
             this.outputSlot.setStack(stonecuttingRecipe.craft(this.input));
         } else {

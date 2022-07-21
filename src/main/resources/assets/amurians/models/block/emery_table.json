@@ -5,8 +5,8 @@
         "east": "amurians:block/emery_table_side",
         "north": "amurians:block/emery_table_front",
         "particle": "amurians:block/emery_table_front",
-        "south": "amurians:block/emery_table_side",
+        "south": "amurians:block/emery_table_front",
         "up": "amurians:block/emery_table_top",
-        "west": "amurians:block/emery_table_front"
+        "west": "amurians:block/emery_table_side"
     }
 }

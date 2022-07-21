@@ -65,7 +65,11 @@ public class EmeryTableBlock extends HorizontalFacingBlock {
 
     @Override
     @Nullable
-    public NamedScreenHandlerFactory createScreenHandlerFactory(BlockState state, World world, BlockPos pos) {
+    public NamedScreenHandlerFactory createScreenHandlerFactory(
+        BlockState state,
+        World world,
+        BlockPos pos
+    ) {
         return new SimpleNamedScreenHandlerFactory(
             (syncId, playerInventory, player) ->
                 new EmeryTableScreenHandler(

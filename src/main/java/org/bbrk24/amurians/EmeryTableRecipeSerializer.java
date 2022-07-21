@@ -14,15 +14,18 @@ import net.minecraft.util.registry.Registry;
 public class EmeryTableRecipeSerializer implements RecipeSerializer<EmeryTableRecipe> {
     @Override
     public EmeryTableRecipe read(Identifier identifier, JsonObject jsonObject) {
-        String string = JsonHelper.getString(jsonObject, "group", "");
+        String group = JsonHelper.getString(jsonObject, "group", "");
         Ingredient ingredient =
             JsonHelper.hasArray(jsonObject, "ingredient")
                 ? Ingredient.fromJson(JsonHelper.getArray(jsonObject, "ingredient"))
                 : Ingredient.fromJson(JsonHelper.getObject(jsonObject, "ingredient"));
-        String string2 = JsonHelper.getString(jsonObject, "result");
-        int i = JsonHelper.getInt(jsonObject, "count");
-        ItemStack itemStack = new ItemStack(Registry.ITEM.get(new Identifier(string2)), i);
-        return new EmeryTableRecipe(identifier, string, ingredient, itemStack);
+        String resultID = JsonHelper.getString(jsonObject, "result");
+        int resultCount = JsonHelper.getInt(jsonObject, "count", 1);
+        ItemStack resultStack = new ItemStack(
+            Registry.ITEM.get(new Identifier(resultID)),
+            resultCount
+        );
+        return new EmeryTableRecipe(identifier, group, ingredient, resultStack);
     }
 
     @Override

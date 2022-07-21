@@ -32,9 +32,4 @@ public class EmeryTableRecipe extends CuttingRecipe {
     public Ingredient getInput() {
         return this.input;
     }
-
-    @Override
-    public boolean isIgnoredInRecipeBook() {
-        return true;
-    }
 }

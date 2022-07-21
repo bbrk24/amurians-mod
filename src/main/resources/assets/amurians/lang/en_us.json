@@ -1,5 +1,8 @@
 {
+    "block.amurians.emery_table": "Emery Table",
     "block.amurians.ruby_block": "Block of Ruby",
+    "container.emery_table": "Emery Table",
+    "entity.amurians.amurian": "Amurian",
     "item.amurians.ruby": "Ruby",
     "item.amurians.ruby_boots": "Ruby Boots",
     "item.amurians.ruby_chestplate": "Ruby Chestplate",
