@@ -135,8 +135,8 @@ public class AmurianEntity extends MerchantEntity {
         return MobEntity.createMobAttributes()
             .add(EntityAttributes.GENERIC_MAX_HEALTH, 18.0)
             .add(EntityAttributes.GENERIC_ATTACK_DAMAGE, 1.5)
-            .add(EntityAttributes.GENERIC_MOVEMENT_SPEED, WANDER_SPEED)
-            .add(EntityAttributes.GENERIC_FOLLOW_RANGE, 16.0);
+            .add(EntityAttributes.GENERIC_MOVEMENT_SPEED, MAX_SPEED)
+            .add(EntityAttributes.GENERIC_FOLLOW_RANGE, 20.0);
     }
     
     @Override

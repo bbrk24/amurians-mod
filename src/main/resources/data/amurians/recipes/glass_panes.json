@@ -1,0 +1,6 @@
+{
+    "type": "amurians:emery_table",
+    "ingredient": { "item": "minecraft:glass" },
+    "result": "minecraft:glass_pane",
+    "count": 11
+}

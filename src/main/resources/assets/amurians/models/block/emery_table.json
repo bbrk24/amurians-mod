@@ -1,0 +1,12 @@
+{
+    "parent": "minecraft:block/cube",
+    "textures": {
+        "down": "amurians:block/emery_table_bottom",
+        "east": "amurians:block/emery_table_side",
+        "north": "amurians:block/emery_table_front",
+        "particle": "amurians:block/emery_table_front",
+        "south": "amurians:block/emery_table_side",
+        "up": "amurians:block/emery_table_top",
+        "west": "amurians:block/emery_table_front"
+    }
+}

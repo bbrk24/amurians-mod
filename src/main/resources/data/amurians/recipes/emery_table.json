@@ -1,0 +1,10 @@
+{
+    "type": "minecraft:crafting_shaped",
+    "pattern": [" R ", "RWR", "SSS"],
+    "key": {
+        "R": { "item": "amurians:ruby_shard" },
+        "W": { "tag": "minecraft:wool" },
+        "S": { "tag": "amurians:emery_table_base" }
+    },
+    "result": { "item": "amurians:emery_table" }
+}
