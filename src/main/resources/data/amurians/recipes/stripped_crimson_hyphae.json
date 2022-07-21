@@ -1,0 +1,5 @@
+{
+    "type": "amurians:emery_table",
+    "ingredient": { "item": "minecraft:crimson_hyphae" },
+    "result": "minecraft:stripped_crimson_hyphae"
+}

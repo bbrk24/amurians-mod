@@ -1,0 +1,5 @@
+{
+    "type": "amurians:emery_table",
+    "ingredient": { "item": "minecraft:mangrove_wood" },
+    "result": "minecraft:stripped_mangrove_wood"
+}
