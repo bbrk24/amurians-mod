@@ -1,0 +1,6 @@
+{
+    "type": "amurians:emery_table",
+    "ingredient": { "item": "minecraft:orange_stained_glass" },
+    "result": "minecraft:orange_stained_glass_pane",
+    "count": 11
+}
