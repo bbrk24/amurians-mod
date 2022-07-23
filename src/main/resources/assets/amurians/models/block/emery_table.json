@@ -1,5 +1,12 @@
 {
     "parent": "minecraft:block/cube",
+    "display": {
+        "firstperson_righthand": {
+            "rotation": [0, 135, 0],
+            "translation": [0, 0, 0],
+            "scale": [0.4, 0.4, 0.4]
+        }
+    },
     "textures": {
         "down": "amurians:block/emery_table_bottom",
         "east": "amurians:block/emery_table_side",

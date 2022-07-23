@@ -1,5 +1,9 @@
 package org.bbrk24.amurians;
 
+import com.mojang.datafixers.util.Pair;
+
+import java.util.List;
+
 import org.jetbrains.annotations.Nullable;
 
 import net.minecraft.entity.EntityType;
@@ -22,6 +26,8 @@ import net.minecraft.entity.ai.pathing.PathNodeType;
 import net.minecraft.entity.attribute.DefaultAttributeContainer;
 import net.minecraft.entity.attribute.EntityAttributeModifier;
 import net.minecraft.entity.attribute.EntityAttributes;
+import net.minecraft.entity.effect.StatusEffectInstance;
+import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.mob.Angerable;
 import net.minecraft.entity.mob.CreeperEntity;
 import net.minecraft.entity.mob.DrownedEntity;
@@ -48,15 +54,19 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.item.MiningToolItem;
+import net.minecraft.item.SuspiciousStewItem;
 import net.minecraft.item.SwordItem;
 import net.minecraft.item.TridentItem;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.stat.Stats;
+import net.minecraft.tag.TagKey;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.TimeHelper;
 import net.minecraft.util.math.intprovider.UniformIntProvider;
 import net.minecraft.util.math.random.Random;
+import net.minecraft.util.registry.Registry;
 import net.minecraft.village.TradeOffer;
 import net.minecraft.village.TradeOfferList;
 import net.minecraft.world.World;
@@ -66,6 +76,10 @@ import net.minecraft.world.World;
 // - doesn't correctly call for help [bug]
 
 public class AmurianEntity extends MerchantEntity {
+    private static final TagKey<Item> PREFERRED_FOODS = TagKey.of(
+        Registry.ITEM_KEY,
+        new Identifier("amurians", "amurian_preferred_food")
+    );
     private static final double MAX_SPEED = 0.5;
     private static final double WANDER_SPEED = 0.35;
     private float lastActionableDamage = 0.0f;
@@ -162,12 +176,18 @@ public class AmurianEntity extends MerchantEntity {
     @Override
     protected void initGoals() {
         this.goalSelector.add(0, new SwimGoal(this));
-        this.goalSelector.add(1, new FleeEntityGoal<>(this, CreeperEntity.class, 3.0f, WANDER_SPEED, MAX_SPEED));
+        this.goalSelector.add(
+            1,
+            new FleeEntityGoal<>(this, CreeperEntity.class, 3.0f, MAX_SPEED, MAX_SPEED)
+        );
         this.goalSelector.add(1, new AmurianEscapeDangerGoal(this));
         this.goalSelector.add(2, new AmurianAttackGoal(this));
         // The FleeEntityGoal for ZoglinEntity is lower priority than the AttackGoal, so they flee
         // until the Zoglin lands an attack.
-        this.goalSelector.add(3, new FleeEntityGoal<>(this, ZoglinEntity.class, 16.0f, WANDER_SPEED, MAX_SPEED));
+        this.goalSelector.add(
+            3,
+            new FleeEntityGoal<>(this, ZoglinEntity.class, 16.0f, MAX_SPEED, MAX_SPEED)
+        );
         this.goalSelector.add(4, new StopFollowingCustomerGoal(this));
         this.goalSelector.add(4, new LookAtCustomerGoal(this));
         this.goalSelector.add(5, new AmurianEatGoal(this));
@@ -199,6 +219,7 @@ public class AmurianEntity extends MerchantEntity {
     public void setAttacker(LivingEntity attacker) {
         if (
             attacker != null &&
+            this.canTarget(attacker) &&
             (attacker != this.getAttacker() || this.lastDamageTaken > this.lastActionableDamage)
         ) {
             this.lastActionableDamage = this.lastDamageTaken;
@@ -250,6 +271,70 @@ public class AmurianEntity extends MerchantEntity {
         Item newItem = newStack.getItem();
         Item oldItem = oldStack.getItem();
 
+        if (newItem.isFood() && oldItem.isFood()) {
+            // short-circuit; don't check the status effect list for suspicious stew
+            if (newItem instanceof SuspiciousStewItem) {
+                return false;
+            }
+            if (oldItem instanceof SuspiciousStewItem) {
+                return true;
+            }
+
+            FoodComponent newFood = newItem.getFoodComponent();
+            FoodComponent oldFood = oldItem.getFoodComponent();
+
+            // If only one gives poison, or one is more poisonous, prefer the one with less poison
+            List<Pair<StatusEffectInstance, Float>> newStatusEffects = newFood.getStatusEffects();
+            List<Pair<StatusEffectInstance, Float>> oldStatusEffects = oldFood.getStatusEffects();
+            // poison amount = poison time * pow(2, poison level), since higher level poison damages
+            // faster in that exact way
+            // regen 2 = poison 1, but negative
+            float newFoodPoisonAmount = 0.0f;
+            float oldFoodPoisonAmount = 0.0f;
+
+            for (Pair<StatusEffectInstance, ?> p : newStatusEffects) {
+                StatusEffectInstance effect = p.getFirst();
+                if (effect.getEffectType() == StatusEffects.POISON) {
+                    newFoodPoisonAmount +=
+                        (float)effect.getDuration() * (float)Math.pow(2.0, (double)effect.getAmplifier());
+                } else if (effect.getEffectType() == StatusEffects.REGENERATION) {
+                    newFoodPoisonAmount += -0.5f *
+                        (float)effect.getDuration() *
+                        (float)Math.pow(2.0, (double)effect.getAmplifier());
+                }
+            }
+            for (Pair<StatusEffectInstance, ?> p : oldStatusEffects) {
+                StatusEffectInstance effect = p.getFirst();
+                if (effect.getEffectType() == StatusEffects.POISON) {
+                    oldFoodPoisonAmount +=
+                        (float)effect.getDuration() * (float)Math.pow(2.0, (double)effect.getAmplifier());
+                } else if (effect.getEffectType() == StatusEffects.REGENERATION) {
+                    oldFoodPoisonAmount += -0.5f *
+                        (float)effect.getDuration() *
+                        (float)Math.pow(2.0, (double)effect.getAmplifier());
+                }
+            }
+
+            if (newFoodPoisonAmount != oldFoodPoisonAmount) {
+                return newFoodPoisonAmount < oldFoodPoisonAmount;
+            }
+
+            // if there's no poison/regen difference, prefer specific foods
+            boolean newFoodPreferred = newStack.isIn(PREFERRED_FOODS);
+            if (newFoodPreferred != oldStack.isIn(PREFERRED_FOODS)) {
+                return newFoodPreferred;
+            }
+
+            // failing that, go by those with higher hunger
+            if (newFood.getHunger() != oldFood.getHunger()) {
+                return newFood.getHunger() > oldFood.getHunger();
+            }
+
+            // if hunger is equal, prefer those eaten quickly
+            if (newFood.isSnack() != oldFood.isSnack()) {
+                return newFood.isSnack();
+            }
+        }
         if (newItem instanceof TridentItem) {
             return this.prefersTrident(newStack, oldStack);
         }
@@ -307,11 +392,20 @@ public class AmurianEntity extends MerchantEntity {
      * @param item Must be a {@c ToolItem} or {@c TridentItem}.
      */
     private double getAttackSpeed(Item item) {
-        EntityAttributeModifier modifier =
-            (EntityAttributeModifier)item.getAttributeModifiers(EquipmentSlot.MAINHAND)
+        EntityAttributeModifier modifier = (EntityAttributeModifier) item.getAttributeModifiers(EquipmentSlot.MAINHAND)
                 .get(EntityAttributes.GENERIC_ATTACK_SPEED)
                 .toArray()[0];
         return modifier.getValue();
+    }
+    
+    @Override
+    protected void consumeItem() {
+        super.consumeItem();
+        if (this.activeItemStack.isFood()) {
+            FoodComponent food = this.activeItemStack.getItem().getFoodComponent();
+            this.heal(food.getHunger());
+            this.activeItemStack.decrement(1);
+        }
     }
 
     static class AmurianEscapeDangerGoal extends EscapeDangerGoal {
@@ -376,16 +470,6 @@ public class AmurianEntity extends MerchantEntity {
             this.mob.setCurrentHand(Hand.OFF_HAND);
             this.mob.navigation.stop();
         }
-        
-        @Override
-        public void tick() {
-            ItemStack foodStack = mob.getOffHandStack();
-            if (this.mob.itemUseTimeLeft == 1) {
-                FoodComponent food = foodStack.getItem().getFoodComponent();
-                foodStack.decrement(1);
-                mob.heal(food.getHunger());
-            }
-        }
 
         @Override
         public void stop() {
@@ -410,7 +494,9 @@ public class AmurianEntity extends MerchantEntity {
         @Override
         protected void setMobEntityTarget(MobEntity mob, LivingEntity target) {
             if (mob instanceof AmurianEntity) {
-                ((AmurianEntity)mob).lastActionableDamage = ((AmurianEntity)this.mob).lastActionableDamage;
+                AmurianEntity amurian = (AmurianEntity) mob;
+                // amurian.setAttacker(this.target);
+                amurian.lastActionableDamage = ((AmurianEntity)this.mob).lastActionableDamage;
             }
             super.setMobEntityTarget(mob, target);
         }

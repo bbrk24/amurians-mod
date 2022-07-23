@@ -17,6 +17,6 @@ public class AmurianRenderer extends MobEntityRenderer<AmurianEntity, VillagerRe
 
     @Override
     public Identifier getTexture(AmurianEntity var1) {
-        return new Identifier("textures/entity/villager/wandering_trader.png");
+        return new Identifier("textures/entity/wandering_trader.png");
     }
 }
