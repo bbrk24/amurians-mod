@@ -1,0 +1,5 @@
+{
+    "type": "amurians:emery_table",
+    "ingredient": { "item": "amurians:azalea_wood" },
+    "result": "amurians:stripped_azalea_wood"
+}

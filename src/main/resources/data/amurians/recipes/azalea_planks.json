@@ -1,0 +1,5 @@
+{
+    "type": "minecraft:crafting_shapeless",
+    "ingredients": [{ "tag": "amurians:azalea_logs" }],
+    "result": { "item": "amurians:azalea_planks", "count": 4 }
+}

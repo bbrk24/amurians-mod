@@ -1,6 +1,11 @@
 {
+    "block.amurians.azalea_log": "Azalea Log",
+    "block.amurians.azalea_planks": "Azalea Planks",
+    "block.amurians.azalea_wood": "Azalea Wood",
     "block.amurians.emery_table": "Emery Table",
     "block.amurians.ruby_block": "Block of Ruby",
+    "block.amurians.stripped_azalea_log": "Stripped Azalea Log",
+    "block.amurians.stripped_azalea_wood": "Stripped Azalea Wood",
     "container.emery_table": "Emery Table",
     "entity.amurians.amurian": "Amurian",
     "item.amurians.ruby": "Ruby",

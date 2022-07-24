@@ -1,0 +1,15 @@
+{
+    "parent": "minecraft:recipes/root",
+    "criteria": {
+        "has_azalea_log": {
+            "conditions": { "items": [{ "tag": "amurians:azalea_logs" }] },
+            "trigger": "minecraft:inventory_changed"
+        },
+        "has_the_recipe": {
+            "conditions": { "recipe": "amurians:azalea_planks" },
+            "trigger": "minecraft:recipe_unlocked"
+        }
+    },
+    "requirements": [["has_azalea_log", "has_the_recipe"]],
+    "rewards": { "recipes": ["amurians:azalea_planks"] }
+}

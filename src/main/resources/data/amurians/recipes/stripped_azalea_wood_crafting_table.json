@@ -1,0 +1,6 @@
+{
+    "type": "minecraft:crafting_shaped",
+    "pattern": ["##", "##"],
+    "key": { "#": { "item": "amurians:stripped_azalea_log"} },
+    "result": { "item": "amurians:stripped_azalea_wood", "count": 3 }
+}
