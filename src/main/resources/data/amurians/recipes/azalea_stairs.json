@@ -1,0 +1,7 @@
+{
+    "type": "minecraft:crafting_shaped",
+    "group": "wooden_stairs",
+    "pattern": ["#  ", "## ", "###"],
+    "key": { "#": { "item": "amurians:azalea_planks" } },
+    "result": { "item": "amurians:azalea_stairs", "count": 4 }
+}

@@ -13,6 +13,8 @@ import net.minecraft.block.Block;
 import net.minecraft.block.MapColor;
 import net.minecraft.block.Material;
 import net.minecraft.block.PillarBlock;
+import net.minecraft.block.SlabBlock;
+import net.minecraft.block.StairsBlock;
 import net.minecraft.entity.EntityDimensions;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.EquipmentSlot;
@@ -30,6 +32,9 @@ import net.minecraft.util.math.Direction;
 import net.minecraft.util.registry.Registry;
 
 public class Initializer implements ModInitializer {
+    private static final MapColor AZALEA_BARK_COLOR = MapColor.SPRUCE_BROWN;
+    private static final MapColor AZALEA_WOOD_COLOR = MapColor.PALE_YELLOW;
+
     public static final Logger LOGGER = LoggerFactory.getLogger("amurians");
 
     public static final Item RUBY = new Item(new FabricItemSettings().group(ItemGroup.MISC));
@@ -66,31 +71,34 @@ public class Initializer implements ModInitializer {
         FabricBlockSettings.of(
             Material.WOOD,
             state -> state.get(PillarBlock.AXIS) == Direction.Axis.Y
-                ? MapColor.PALE_YELLOW
-                : MapColor.SPRUCE_BROWN
+                ? AZALEA_WOOD_COLOR
+                : AZALEA_BARK_COLOR
         )
             .strength(2.0f)
             .sounds(BlockSoundGroup.WOOD)
     );
     public static final Block AZALEA_PLANKS = new Block(
-        FabricBlockSettings.of(Material.WOOD, MapColor.PALE_YELLOW)
-            .strength(2.0f)
+        FabricBlockSettings.of(Material.WOOD, AZALEA_WOOD_COLOR)
+            .strength(2.0f, 3.0f)
             .sounds(BlockSoundGroup.WOOD)
     );
     public static final Block STRIPPED_AZALEA_LOG = new PillarBlock(
-        FabricBlockSettings.of(Material.WOOD, MapColor.PALE_YELLOW)
+        FabricBlockSettings.of(Material.WOOD, AZALEA_WOOD_COLOR)
             .strength(2.0f)
             .sounds(BlockSoundGroup.WOOD)
     );
     public static final Block AZALEA_WOOD = new PillarBlock(
-        FabricBlockSettings.of(Material.WOOD, MapColor.SPRUCE_BROWN)
+        FabricBlockSettings.of(Material.WOOD, AZALEA_BARK_COLOR)
             .strength(2.0f)
             .sounds(BlockSoundGroup.WOOD)
     );
     public static final Block STRIPPED_AZALEA_WOOD = new PillarBlock(
-        FabricBlockSettings.of(Material.WOOD, MapColor.PALE_YELLOW)
-            .strength(2.0f)
-            .sounds(BlockSoundGroup.WOOD)
+        FabricBlockSettings.copy(STRIPPED_AZALEA_LOG)
+    );
+    public static final Block AZALEA_SLAB = new SlabBlock(FabricBlockSettings.copy(AZALEA_PLANKS));
+    public static final Block AZALEA_STAIRS = new StairsBlock(
+        AZALEA_PLANKS.getDefaultState(),
+        FabricBlockSettings.copy(AZALEA_PLANKS)
     );
 
     public static final EntityType<AmurianEntity> AMURIAN = Registry.register(
@@ -109,112 +117,26 @@ public class Initializer implements ModInitializer {
         RecipeSerializer.register("amurians:emery_table", new EmeryTableRecipeSerializer());
 
     @Override
-	public void onInitialize() {
-        Registry.register(
-            Registry.BLOCK,
-            new Identifier("amurians", "ruby_block"),
-            RUBY_BLOCK
-        );
-        Registry.register(
-            Registry.BLOCK,
-            new Identifier("amurians", "emery_table"),
-            EMERY_TABLE
-        );
-        Registry.register(
-            Registry.BLOCK,
-            new Identifier("amurians", "azalea_log"),
-            AZALEA_LOG
-        );
-        Registry.register(
-            Registry.BLOCK,
-            new Identifier("amurians", "azalea_planks"),
-            AZALEA_PLANKS
-        );
-        Registry.register(
-            Registry.BLOCK,
-            new Identifier("amurians", "stripped_azalea_log"),
-            STRIPPED_AZALEA_LOG
-        );
-        Registry.register(
-            Registry.BLOCK,
-            new Identifier("amurians", "azalea_wood"),
-            AZALEA_WOOD
-        );
-        Registry.register(
-            Registry.BLOCK,
-            new Identifier("amurians", "stripped_azalea_wood"),
-            STRIPPED_AZALEA_WOOD
-        );
+    public void onInitialize() {
+        registerBlock(RUBY_BLOCK, "ruby_block", ItemGroup.BUILDING_BLOCKS);
+        registerBlock(EMERY_TABLE, "emery_table", ItemGroup.DECORATIONS);
+        registerBlock(AZALEA_LOG, "azalea_log", ItemGroup.BUILDING_BLOCKS);
+        registerBlock(AZALEA_PLANKS, "azalea_planks", ItemGroup.BUILDING_BLOCKS);
+        registerBlock(STRIPPED_AZALEA_LOG, "stripped_azalea_log", ItemGroup.BUILDING_BLOCKS);
+        registerBlock(AZALEA_WOOD, "azalea_wood", ItemGroup.BUILDING_BLOCKS);
+        registerBlock(STRIPPED_AZALEA_WOOD, "stripped_azalea_wood", ItemGroup.BUILDING_BLOCKS);
+        registerBlock(AZALEA_SLAB, "azalea_slab", ItemGroup.BUILDING_BLOCKS);
+        registerBlock(AZALEA_STAIRS, "azalea_stairs", ItemGroup.BUILDING_BLOCKS);
 
         StrippableBlockRegistry.register(AZALEA_LOG, STRIPPED_AZALEA_LOG);
         StrippableBlockRegistry.register(AZALEA_WOOD, STRIPPED_AZALEA_WOOD);
 
-        Registry.register(
-            Registry.ITEM,
-            new Identifier("amurians", "ruby_block"),
-            new BlockItem(RUBY_BLOCK, new FabricItemSettings().group(ItemGroup.BUILDING_BLOCKS))
-        );
-        Registry.register(
-            Registry.ITEM,
-            new Identifier("amurians", "emery_table"),
-            new BlockItem(EMERY_TABLE, new FabricItemSettings().group(ItemGroup.DECORATIONS))
-        );
-        Registry.register(
-            Registry.ITEM,
-            new Identifier("amurians", "azalea_log"),
-            new BlockItem(AZALEA_LOG, new FabricItemSettings().group(ItemGroup.BUILDING_BLOCKS))
-        );
-        Registry.register(
-            Registry.ITEM,
-            new Identifier("amurians", "azalea_planks"),
-            new BlockItem(AZALEA_PLANKS, new FabricItemSettings().group(ItemGroup.BUILDING_BLOCKS))
-        );
-        Registry.register(
-            Registry.ITEM,
-            new Identifier("amurians", "stripped_azalea_log"),
-            new BlockItem(STRIPPED_AZALEA_LOG, new FabricItemSettings().group(ItemGroup.BUILDING_BLOCKS))
-        );
-        Registry.register(
-            Registry.ITEM,
-            new Identifier("amurians", "azalea_wood"),
-            new BlockItem(AZALEA_WOOD, new FabricItemSettings().group(ItemGroup.BUILDING_BLOCKS))
-        );
-         Registry.register(
-            Registry.ITEM,
-            new Identifier("amurians", "stripped_azalea_wood"),
-            new BlockItem(STRIPPED_AZALEA_WOOD, new FabricItemSettings().group(ItemGroup.BUILDING_BLOCKS))
-        );
-
-        Registry.register(
-            Registry.ITEM,
-            new Identifier("amurians", "ruby"),
-            RUBY
-        );
-        Registry.register(
-            Registry.ITEM,
-            new Identifier("amurians", "ruby_shard"),
-            RUBY_SHARD
-        );
-        Registry.register(
-            Registry.ITEM,
-            new Identifier("amurians", "ruby_helmet"),
-            RUBY_HELMET
-        );
-        Registry.register(
-            Registry.ITEM,
-            new Identifier("amurians", "ruby_chestplate"),
-            RUBY_CHESTPLATE
-        );
-        Registry.register(
-            Registry.ITEM,
-            new Identifier("amurians", "ruby_leggings"),
-            RUBY_LEGGINGS
-        );
-        Registry.register(
-            Registry.ITEM,
-            new Identifier("amurians", "ruby_boots"),
-            RUBY_BOOTS
-        );
+        registerItem(RUBY, "ruby");
+        registerItem(RUBY_SHARD, "ruby_shard");
+        registerItem(RUBY_HELMET, "ruby_helmet");
+        registerItem(RUBY_CHESTPLATE, "ruby_chestplate");
+        registerItem(RUBY_LEGGINGS, "ruby_leggings");
+        registerItem(RUBY_BOOTS, "ruby_boots");
 
         FabricDefaultAttributeRegistry.register(AMURIAN, AmurianEntity.createAmurianAttributes());
 
@@ -227,5 +149,19 @@ public class Initializer implements ModInitializer {
         // method returns. However, I don't have anything to do with it, so just assert that it
         // exists.
         assert EMERY_TABLE_RECIPE_SERIALIZER != null;
+    }
+
+    private static void registerBlock(Block block, String name, ItemGroup group) {
+        Identifier id = new Identifier("amurians", name);
+        Registry.register(Registry.BLOCK, id, block);
+        Registry.register(
+            Registry.ITEM,
+            id,
+            new BlockItem(block, new FabricItemSettings().group(group))
+        );
+    }
+
+    private static void registerItem(Item item, String name) {
+        Registry.register(Registry.ITEM, new Identifier("amurians", name), item);
     }
 }

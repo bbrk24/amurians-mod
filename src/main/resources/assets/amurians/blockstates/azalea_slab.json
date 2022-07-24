@@ -1,0 +1,7 @@
+{
+    "variants": {
+        "type=bottom": { "model": "amurians:block/azalea_slab" },
+        "type=double": { "model": "amurians:block/azalea_planks" },
+        "type=top": { "model": "amurians:block/azalea_slab_top" }
+    }
+}
