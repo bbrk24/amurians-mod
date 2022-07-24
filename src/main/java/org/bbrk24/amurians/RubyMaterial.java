@@ -23,9 +23,9 @@ public class RubyMaterial implements ArmorMaterial {
         385  // helmet
     };
 
-    protected static RubyMaterial instance = new RubyMaterial();
+    private static final RubyMaterial instance = new RubyMaterial();
 
-    private RubyMaterial() {
+    protected RubyMaterial() {
     }
 
     public static RubyMaterial getInstance() {

@@ -8,6 +8,7 @@ import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricDefaultAttributeRegistry;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricEntityTypeBuilder;
+import net.fabricmc.fabric.api.registry.StrippableBlockRegistry;
 import net.minecraft.block.Block;
 import net.minecraft.block.MapColor;
 import net.minecraft.block.Material;
@@ -23,6 +24,7 @@ import net.minecraft.item.ItemGroup;
 import net.minecraft.recipe.RecipeSerializer;
 import net.minecraft.recipe.RecipeType;
 import net.minecraft.screen.ScreenHandlerType;
+import net.minecraft.sound.BlockSoundGroup;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.registry.Registry;
@@ -57,6 +59,7 @@ public class Initializer implements ModInitializer {
         FabricBlockSettings.of(Material.METAL, MapColor.BRIGHT_RED)
             .strength(5.0f, 6.0f)
             .requiresTool()
+            .sounds(BlockSoundGroup.METAL)
     );
     public static final Block EMERY_TABLE = new EmeryTableBlock();
     public static final Block AZALEA_LOG = new PillarBlock(
@@ -67,22 +70,27 @@ public class Initializer implements ModInitializer {
                 : MapColor.SPRUCE_BROWN
         )
             .strength(2.0f)
+            .sounds(BlockSoundGroup.WOOD)
     );
     public static final Block AZALEA_PLANKS = new Block(
         FabricBlockSettings.of(Material.WOOD, MapColor.PALE_YELLOW)
             .strength(2.0f)
+            .sounds(BlockSoundGroup.WOOD)
     );
     public static final Block STRIPPED_AZALEA_LOG = new PillarBlock(
         FabricBlockSettings.of(Material.WOOD, MapColor.PALE_YELLOW)
             .strength(2.0f)
+            .sounds(BlockSoundGroup.WOOD)
     );
     public static final Block AZALEA_WOOD = new PillarBlock(
         FabricBlockSettings.of(Material.WOOD, MapColor.SPRUCE_BROWN)
             .strength(2.0f)
+            .sounds(BlockSoundGroup.WOOD)
     );
     public static final Block STRIPPED_AZALEA_WOOD = new PillarBlock(
         FabricBlockSettings.of(Material.WOOD, MapColor.PALE_YELLOW)
             .strength(2.0f)
+            .sounds(BlockSoundGroup.WOOD)
     );
 
     public static final EntityType<AmurianEntity> AMURIAN = Registry.register(
@@ -137,6 +145,9 @@ public class Initializer implements ModInitializer {
             new Identifier("amurians", "stripped_azalea_wood"),
             STRIPPED_AZALEA_WOOD
         );
+
+        StrippableBlockRegistry.register(AZALEA_LOG, STRIPPED_AZALEA_LOG);
+        StrippableBlockRegistry.register(AZALEA_WOOD, STRIPPED_AZALEA_WOOD);
 
         Registry.register(
             Registry.ITEM,
