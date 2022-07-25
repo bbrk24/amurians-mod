@@ -1,6 +1,10 @@
 {
+    "block.amurians.azalea_fence": "Azalea Fence",
+    "block.amurians.azalea_fence_gate": "Azalea Fence Gate",
     "block.amurians.azalea_log": "Azalea Log",
     "block.amurians.azalea_planks": "Azalea Planks",
+    "block.amurians.azalea_slab": "Azalea Slab",
+    "block.amurians.azalea_stairs": "Azalea Stairs",
     "block.amurians.azalea_wood": "Azalea Wood",
     "block.amurians.emery_table": "Emery Table",
     "block.amurians.ruby_block": "Block of Ruby",

@@ -8,8 +8,12 @@ import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricDefaultAttributeRegistry;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricEntityTypeBuilder;
+import net.fabricmc.fabric.api.registry.FuelRegistry;
 import net.fabricmc.fabric.api.registry.StrippableBlockRegistry;
+import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
+import net.minecraft.block.FenceBlock;
+import net.minecraft.block.FenceGateBlock;
 import net.minecraft.block.MapColor;
 import net.minecraft.block.Material;
 import net.minecraft.block.PillarBlock;
@@ -34,6 +38,15 @@ import net.minecraft.util.registry.Registry;
 public class Initializer implements ModInitializer {
     private static final MapColor AZALEA_BARK_COLOR = MapColor.SPRUCE_BROWN;
     private static final MapColor AZALEA_WOOD_COLOR = MapColor.PALE_YELLOW;
+
+    private static final AbstractBlock.Settings AZALEA_PLANKS_SETTINGS =
+        FabricBlockSettings.of(Material.WOOD, AZALEA_WOOD_COLOR)
+            .strength(2.0f, 3.0f)
+            .sounds(BlockSoundGroup.WOOD);
+    private static final AbstractBlock.Settings STRIPPED_AZALEA_SETTINGS =
+        FabricBlockSettings.of(Material.WOOD, AZALEA_WOOD_COLOR)
+            .strength(2.0f)
+            .sounds(BlockSoundGroup.WOOD);
 
     public static final Logger LOGGER = LoggerFactory.getLogger("amurians");
 
@@ -77,29 +90,21 @@ public class Initializer implements ModInitializer {
             .strength(2.0f)
             .sounds(BlockSoundGroup.WOOD)
     );
-    public static final Block AZALEA_PLANKS = new Block(
-        FabricBlockSettings.of(Material.WOOD, AZALEA_WOOD_COLOR)
-            .strength(2.0f, 3.0f)
-            .sounds(BlockSoundGroup.WOOD)
-    );
-    public static final Block STRIPPED_AZALEA_LOG = new PillarBlock(
-        FabricBlockSettings.of(Material.WOOD, AZALEA_WOOD_COLOR)
-            .strength(2.0f)
-            .sounds(BlockSoundGroup.WOOD)
-    );
+    public static final Block AZALEA_PLANKS = new Block(AZALEA_PLANKS_SETTINGS);
+    public static final Block STRIPPED_AZALEA_LOG = new PillarBlock(STRIPPED_AZALEA_SETTINGS);
     public static final Block AZALEA_WOOD = new PillarBlock(
         FabricBlockSettings.of(Material.WOOD, AZALEA_BARK_COLOR)
             .strength(2.0f)
             .sounds(BlockSoundGroup.WOOD)
     );
-    public static final Block STRIPPED_AZALEA_WOOD = new PillarBlock(
-        FabricBlockSettings.copy(STRIPPED_AZALEA_LOG)
-    );
-    public static final Block AZALEA_SLAB = new SlabBlock(FabricBlockSettings.copy(AZALEA_PLANKS));
+    public static final Block STRIPPED_AZALEA_WOOD = new PillarBlock(STRIPPED_AZALEA_SETTINGS);
+    public static final Block AZALEA_SLAB = new SlabBlock(AZALEA_PLANKS_SETTINGS);
     public static final Block AZALEA_STAIRS = new StairsBlock(
         AZALEA_PLANKS.getDefaultState(),
-        FabricBlockSettings.copy(AZALEA_PLANKS)
+        AZALEA_PLANKS_SETTINGS
     );
+    public static final Block AZALEA_FENCE = new FenceBlock(AZALEA_PLANKS_SETTINGS);
+    public static final Block AZALEA_FENCE_GATE = new FenceGateBlock(AZALEA_PLANKS_SETTINGS);
 
     public static final EntityType<AmurianEntity> AMURIAN = Registry.register(
         Registry.ENTITY_TYPE,
@@ -127,6 +132,8 @@ public class Initializer implements ModInitializer {
         registerBlock(STRIPPED_AZALEA_WOOD, "stripped_azalea_wood", ItemGroup.BUILDING_BLOCKS);
         registerBlock(AZALEA_SLAB, "azalea_slab", ItemGroup.BUILDING_BLOCKS);
         registerBlock(AZALEA_STAIRS, "azalea_stairs", ItemGroup.BUILDING_BLOCKS);
+        registerBlock(AZALEA_FENCE, "azalea_fence", ItemGroup.DECORATIONS);
+        registerBlock(AZALEA_FENCE_GATE, "azalea_fence_gate", ItemGroup.REDSTONE);
 
         StrippableBlockRegistry.register(AZALEA_LOG, STRIPPED_AZALEA_LOG);
         StrippableBlockRegistry.register(AZALEA_WOOD, STRIPPED_AZALEA_WOOD);
@@ -137,6 +144,9 @@ public class Initializer implements ModInitializer {
         registerItem(RUBY_CHESTPLATE, "ruby_chestplate");
         registerItem(RUBY_LEGGINGS, "ruby_leggings");
         registerItem(RUBY_BOOTS, "ruby_boots");
+
+        FuelRegistry.INSTANCE.add(AZALEA_FENCE, 300);
+        FuelRegistry.INSTANCE.add(AZALEA_FENCE_GATE, 300);
 
         FabricDefaultAttributeRegistry.register(AMURIAN, AmurianEntity.createAmurianAttributes());
 
