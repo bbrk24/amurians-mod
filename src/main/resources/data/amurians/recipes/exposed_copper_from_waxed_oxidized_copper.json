@@ -1,0 +1,5 @@
+{
+    "type": "amurians:emery_table",
+    "ingredient": { "item": "minecraft:waxed_oxidized_copper" },
+    "result": "minecraft:exposed_copper",
+}

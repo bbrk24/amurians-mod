@@ -1,0 +1,5 @@
+{
+    "type": "amurians:emery_table",
+    "ingredient": { "item": "minecraft:waxed_cut_copper_stairs" },
+    "result": "minecraft:cut_copper_stairs",
+}
