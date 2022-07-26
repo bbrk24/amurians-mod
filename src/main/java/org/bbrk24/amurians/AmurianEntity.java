@@ -1,6 +1,9 @@
 package org.bbrk24.amurians;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import com.mojang.datafixers.util.Pair;
+import com.mojang.serialization.Dynamic;
 
 import java.util.List;
 
@@ -10,17 +13,11 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.ExperienceOrbEntity;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.ai.goal.ActiveTargetGoal;
-import net.minecraft.entity.ai.goal.AttackGoal;
-import net.minecraft.entity.ai.goal.EscapeDangerGoal;
-import net.minecraft.entity.ai.goal.FleeEntityGoal;
-import net.minecraft.entity.ai.goal.Goal;
-import net.minecraft.entity.ai.goal.LookAtCustomerGoal;
-import net.minecraft.entity.ai.goal.RevengeGoal;
-import net.minecraft.entity.ai.goal.StopAndLookAtEntityGoal;
-import net.minecraft.entity.ai.goal.StopFollowingCustomerGoal;
-import net.minecraft.entity.ai.goal.SwimGoal;
-import net.minecraft.entity.ai.goal.WanderAroundFarGoal;
+import net.minecraft.entity.ai.brain.Activity;
+import net.minecraft.entity.ai.brain.Brain;
+import net.minecraft.entity.ai.brain.MemoryModuleType;
+import net.minecraft.entity.ai.brain.sensor.Sensor;
+import net.minecraft.entity.ai.brain.sensor.SensorType;
 import net.minecraft.entity.ai.pathing.MobNavigation;
 import net.minecraft.entity.ai.pathing.PathNodeType;
 import net.minecraft.entity.attribute.DefaultAttributeContainer;
@@ -28,60 +25,43 @@ import net.minecraft.entity.attribute.EntityAttributeModifier;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
-import net.minecraft.entity.mob.Angerable;
-import net.minecraft.entity.mob.CreeperEntity;
-import net.minecraft.entity.mob.DrownedEntity;
 import net.minecraft.entity.mob.MobEntity;
-import net.minecraft.entity.mob.Monster;
-import net.minecraft.entity.mob.PillagerEntity;
-import net.minecraft.entity.mob.RavagerEntity;
-import net.minecraft.entity.mob.SpellcastingIllagerEntity;
-import net.minecraft.entity.mob.VindicatorEntity;
-import net.minecraft.entity.mob.ZoglinEntity;
-import net.minecraft.entity.mob.ZombieEntity;
-import net.minecraft.entity.mob.ZombifiedPiglinEntity;
-import net.minecraft.entity.passive.IronGolemEntity;
 import net.minecraft.entity.passive.MerchantEntity;
-import net.minecraft.entity.passive.PandaEntity;
 import net.minecraft.entity.passive.PassiveEntity;
-import net.minecraft.entity.passive.PufferfishEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ArmorItem;
-import net.minecraft.item.BowItem;
-import net.minecraft.item.CrossbowItem;
-import net.minecraft.item.FoodComponent;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.item.MiningToolItem;
-import net.minecraft.item.SuspiciousStewItem;
-import net.minecraft.item.SwordItem;
-import net.minecraft.item.TridentItem;
+import net.minecraft.item.*;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.stat.Stats;
 import net.minecraft.tag.TagKey;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.TimeHelper;
-import net.minecraft.util.math.intprovider.UniformIntProvider;
-import net.minecraft.util.math.random.Random;
 import net.minecraft.util.registry.Registry;
+import net.minecraft.util.registry.RegistryEntry;
 import net.minecraft.village.TradeOffer;
 import net.minecraft.village.TradeOfferList;
 import net.minecraft.world.World;
-
-// - custom canEquip not called [bug]
-// - won't walk towards items [missing feature]
-// - doesn't correctly call for help [bug]
+import net.minecraft.world.biome.Biome;
 
 public class AmurianEntity extends MerchantEntity {
+    public static final double MAX_SPEED = 0.5;
+    public static final double WANDER_SPEED = 0.35;
+    protected static final ImmutableList<MemoryModuleType<?>> MEMORY_MODULES = ImmutableList.of(
+        MemoryModuleType.PATH,
+        MemoryModuleType.DOORS_TO_CLOSE,
+        MemoryModuleType.LOOK_TARGET,
+        MemoryModuleType.WALK_TARGET,
+        MemoryModuleType.CANT_REACH_WALK_TARGET_SINCE,
+        MemoryModuleType.NEAREST_VISIBLE_WANTED_ITEM,
+        MemoryModuleType.HOME
+    );
+    protected static final ImmutableList<SensorType<? extends Sensor<? super AmurianEntity>>> SENSORS
+        = ImmutableList.of();
     private static final TagKey<Item> PREFERRED_FOODS = TagKey.of(
         Registry.ITEM_KEY,
         new Identifier("amurians", "amurian_preferred_food")
     );
-    private static final double MAX_SPEED = 0.5;
-    private static final double WANDER_SPEED = 0.35;
+
     private float lastActionableDamage = 0.0f;
 
     public AmurianEntity(EntityType<? extends AmurianEntity> entityType, World world) {
@@ -152,7 +132,7 @@ public class AmurianEntity extends MerchantEntity {
             .add(EntityAttributes.GENERIC_MOVEMENT_SPEED, MAX_SPEED)
             .add(EntityAttributes.GENERIC_FOLLOW_RANGE, 20.0);
     }
-    
+
     @Override
     public ActionResult interactMob(PlayerEntity player, Hand hand) {
         // copied from WanderingTraderEntity::interactMob
@@ -174,47 +154,30 @@ public class AmurianEntity extends MerchantEntity {
     }
 
     @Override
-    protected void initGoals() {
-        this.goalSelector.add(0, new SwimGoal(this));
-        this.goalSelector.add(
-            1,
-            new FleeEntityGoal<>(this, CreeperEntity.class, 3.0f, MAX_SPEED, MAX_SPEED)
-        );
-        this.goalSelector.add(1, new AmurianEscapeDangerGoal(this));
-        this.goalSelector.add(2, new AmurianAttackGoal(this));
-        // The FleeEntityGoal for ZoglinEntity is lower priority than the AttackGoal, so they flee
-        // until the Zoglin lands an attack.
-        this.goalSelector.add(
-            3,
-            new FleeEntityGoal<>(this, ZoglinEntity.class, 16.0f, MAX_SPEED, MAX_SPEED)
-        );
-        this.goalSelector.add(4, new StopFollowingCustomerGoal(this));
-        this.goalSelector.add(4, new LookAtCustomerGoal(this));
-        this.goalSelector.add(5, new AmurianEatGoal(this));
-        this.goalSelector.add(6, new WanderAroundFarGoal(this, WANDER_SPEED));
-        this.goalSelector.add(7, new StopAndLookAtEntityGoal(this, PlayerEntity.class, 3.0f, 1.0f));
-        this.targetSelector.add(
-            1,
-            new AmurianRevengeGoal(this, AmurianEntity.class, IronGolemEntity.class)
-                .setGroupRevenge()
-        );
-        this.targetSelector.add(2, new ActiveTargetGoal<>(this, RavagerEntity.class, false, true));
-        this.targetSelector.add(2, new ActiveTargetGoal<>(this, PillagerEntity.class, false));
-        this.targetSelector.add(2, new ActiveTargetGoal<>(this, SpellcastingIllagerEntity.class, false));
-        this.targetSelector.add(2, new ActiveTargetGoal<>(this, VindicatorEntity.class, false, true));
-        this.targetSelector.add(
-            3,
-            new ActiveTargetGoal<>(
-                this,
-                ZombieEntity.class,
-                10,
-                true,
-                true,
-                (zombie) -> !(zombie instanceof ZombifiedPiglinEntity || zombie instanceof DrownedEntity)
-            )
-        );
+    @SuppressWarnings({"unchecked"})
+    public Brain<AmurianEntity> getBrain() {
+        return (Brain<AmurianEntity>)super.getBrain();
     }
-    
+
+    @Override
+    protected Brain<AmurianEntity> deserializeBrain(Dynamic<?> dynamic) {
+        Brain<AmurianEntity> brain = this.createBrainProfile().deserialize(dynamic);
+        this.initBrain(brain);
+        return brain;
+    }
+
+    @Override
+    protected Brain.Profile<AmurianEntity> createBrainProfile() {
+        return Brain.createProfile(MEMORY_MODULES, SENSORS);
+    }
+
+    protected void initBrain(Brain<AmurianEntity> brain) {
+        brain.setTaskList(Activity.CORE, AmurianTaskListProvider.createCoreTasks());
+
+        brain.setCoreActivities(ImmutableSet.of(Activity.CORE));
+        brain.refreshActivities(this.world.getTimeOfDay(), this.world.getTime());
+    }
+
     @Override
     public void setAttacker(LivingEntity attacker) {
         if (
@@ -392,12 +355,12 @@ public class AmurianEntity extends MerchantEntity {
      * @param item Must be a {@c ToolItem} or {@c TridentItem}.
      */
     private double getAttackSpeed(Item item) {
-        EntityAttributeModifier modifier = (EntityAttributeModifier) item.getAttributeModifiers(EquipmentSlot.MAINHAND)
+        EntityAttributeModifier modifier = item.getAttributeModifiers(EquipmentSlot.MAINHAND)
                 .get(EntityAttributes.GENERIC_ATTACK_SPEED)
-                .toArray()[0];
+                .toArray(new EntityAttributeModifier[0])[0];
         return modifier.getValue();
     }
-    
+
     @Override
     protected void consumeItem() {
         super.consumeItem();
@@ -408,143 +371,81 @@ public class AmurianEntity extends MerchantEntity {
         }
     }
 
-    static class AmurianEscapeDangerGoal extends EscapeDangerGoal {
-        public AmurianEscapeDangerGoal(AmurianEntity mob) {
-            super(mob, AmurianEntity.MAX_SPEED);
+    public static enum BiomeGroup {
+        COLD,
+        MODERATE,
+        JUNGLE,
+        SAVANNAH;
+
+        private static final TagKey<Biome> JUNGLE_BIOMES = TagKey.of(
+            Registry.BIOME_KEY,
+            new Identifier("amurians", "spawns_jungle_amurians")
+        );
+
+        public static BiomeGroup of(RegistryEntry<Biome> biomeEntry) {
+            // All jungle-like climates, and lush caves, fall into the "jungle" group.
+            if (biomeEntry.isIn(JUNGLE_BIOMES)) {
+                return JUNGLE;
+            }
+            // All hot, dry climates fall into the "savannah" group.
+            float temperature = biomeEntry.value().getTemperature();
+            if (temperature >= 1.0f) {
+                return SAVANNAH;
+            }
+            // All biomes cold enough to support spruce trees fall into the "cold" group.
+            if (temperature <= 0.3f) {
+                return COLD;
+            }
+            // All other biomes fall into the "moderate" group.
+            return MODERATE;
         }
 
         @Override
-        protected boolean isInDanger() {
-            return this.mob.shouldEscapePowderSnow() || this.mob.isOnFire();
+        public String toString() {
+            switch (this) {
+            case COLD:
+                return "cold";
+            case JUNGLE:
+                return "jungle";
+            case MODERATE:
+                return "moderate";
+            case SAVANNAH:
+                return "savanna"; // [sic]
+            }
+        }
+
+        public static BiomeGroup fromString(String s) {
+            switch (s) {
+            case "cold":
+                return COLD;
+            case "jungle":
+                return JUNGLE;
+            case "moderate":
+                return MODERATE;
+            case "savanna":
+                return SAVANNAH;
+            default:
+                throw new IllegalArgumentException(
+                    String.format("Unrecognized biome group '%s'", s)
+                );
+            }
         }
     }
 
-    static class AmurianAttackGoal extends AttackGoal {
-        protected AmurianEntity mob;
-
-        public AmurianAttackGoal(AmurianEntity mob) {
-            super(mob);
-            this.mob = mob;
-        }
-
-        @Override
-        public boolean canStart() {
-            if (this.mob.isBaby()) {
-                return false;
-            }
-            return super.canStart();
-        }
-    }
-
-    static class AmurianEatGoal extends Goal {
-        private AmurianEntity mob;
-
-        public AmurianEatGoal(AmurianEntity mob) {
-            super();
-            this.mob = mob;
-        }
-
-        /** Whether it is possible to eat, regardless of whether the mob is currently eating */
-        private boolean canEat() {
-            return mob.getMaxHealth() - mob.getHealth() >= 3.0f &&
-                !mob.getOffHandStack().isEmpty() &&
-                mob.getOffHandStack().getItem().isFood() &&
-                mob.getTarget() == null;
-        }
+    public static enum Profession {
+        UNEMPLOYED,
+        FISHERMAN,
+        FARMER,
+        BUTCHER,
+        WEAPONSMITH;
 
         @Override
-        public boolean canStart() {
-            return canEat() && mob.itemUseTimeLeft == 0;
+        public String toString() {
+            return this.name().toLowerCase();
         }
 
-        @Override
-        public boolean shouldRunEveryTick() {
-            return true;
-        }
-
-        @Override
-        public void start() {
-            ItemStack offhandStack = this.mob.getOffHandStack();
-            this.mob.itemUseTimeLeft = offhandStack.getMaxUseTime();
-            this.mob.activeItemStack = offhandStack;
-            this.mob.setCurrentHand(Hand.OFF_HAND);
-            this.mob.navigation.stop();
-        }
-
-        @Override
-        public void stop() {
-            mob.clearActiveItem();
-        }
-
-        @Override
-        public boolean shouldContinue() {
-            return canEat() && this.mob.itemUseTimeLeft > 0;
-        }
-    }
-
-    static class AmurianRevengeGoal extends RevengeGoal {
-        private static final UniformIntProvider ANGER_TIME_RANGE = TimeHelper.betweenSeconds(1, 5);
-        protected final Random random = Random.create();
-        protected int ticksRemaining = 0;
-
-        public AmurianRevengeGoal(AmurianEntity mob, Class<?>... noRevengeTypes) {
-            super(mob, noRevengeTypes);
-        }
-
-        @Override
-        protected void setMobEntityTarget(MobEntity mob, LivingEntity target) {
-            if (mob instanceof AmurianEntity) {
-                AmurianEntity amurian = (AmurianEntity) mob;
-                // amurian.setAttacker(this.target);
-                amurian.lastActionableDamage = ((AmurianEntity)this.mob).lastActionableDamage;
-            }
-            super.setMobEntityTarget(mob, target);
-        }
-        
-        @Override
-        public void start() {
-            AmurianEntity amurian = (AmurianEntity)this.mob;
-            int baseTime = ANGER_TIME_RANGE.get(this.random);
-            this.ticksRemaining = 1 + (int)Math.floor(amurian.lastActionableDamage * (float)baseTime);
-        }
-
-        /** 
-         * Whether a mob is guaranteed to continue attacking.
-         */
-        private boolean isPersistentAttacker(LivingEntity entity) {
-            if (entity instanceof PandaEntity) {
-                return ((PandaEntity)entity).isAttacking();
-            }
-            if (
-                entity instanceof Monster ||
-                entity instanceof Angerable ||
-                entity instanceof PufferfishEntity
-            ) {
-                return true;
-            }
-            return false;
-        }
-
-        @Override
-        public boolean shouldContinue() {
-            if (!isPersistentAttacker(this.target) && this.ticksRemaining == 0) {
-                return false;
-            }
-            return super.shouldContinue();
-        }
-
-        @Override
-        public void stop() {
-            this.mob.setAttacker(null);
-            super.stop();
-        }
-
-        @Override
-        public void tick() {
-            super.tick();
-            if (this.ticksRemaining > 0) {
-                --this.ticksRemaining;
-            }
+        public static Profession fromString(String s) {
+            return valueOf(s.toUpperCase());
         }
     }
 }
