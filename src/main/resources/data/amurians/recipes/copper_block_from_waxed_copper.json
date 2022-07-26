@@ -1,5 +1,0 @@
-{
-    "type": "amurians:emery_table",
-    "ingredient": { "item": "minecraft:waxed_copper" },
-    "result": "minecraft:copper_block",
-}

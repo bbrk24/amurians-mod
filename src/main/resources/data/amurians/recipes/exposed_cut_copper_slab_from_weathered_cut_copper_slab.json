@@ -1,5 +1,5 @@
 {
     "type": "amurians:emery_table",
     "ingredient": { "item": "minecraft:weathered_cut_copper_slab" },
-    "result": "minecraft:exposed_cut_copper_slab",
+    "result": "minecraft:exposed_cut_copper_slab"
 }
