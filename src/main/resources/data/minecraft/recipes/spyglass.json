@@ -1,0 +1,10 @@
+{
+    "type": "minecraft:crafting_shaped",
+    "group": "spyglass",
+    "pattern": ["A", "C", "C"],
+    "key": {
+        "A": { "item": "minecraft:amethyst_shard" },
+        "C": { "item": "minecraft:copper_ingot" }
+    },
+    "result": { "item": "minecraft:spyglass" }
+}

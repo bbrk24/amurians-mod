@@ -1,0 +1,7 @@
+{
+    "type": "minecraft:blasting",
+    "cookingtime": 100,
+    "experience": 0.1,
+    "ingredient": { "tag": "amurians:ruby_armor" },
+    "result": "amurians:ruby_shard"
+}
