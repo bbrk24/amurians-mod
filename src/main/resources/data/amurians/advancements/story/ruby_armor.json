@@ -1,0 +1,19 @@
+{
+    "parent": "minecraft:story/obtain_armor",
+    "criteria": {
+        "has_ruby_armor": {
+            "conditions": { "items": [{ "tag": "amurians:ruby_armor" }] },
+            "trigger": "minecraft:inventory_changed"
+        }
+    },
+    "display": {
+        "announce_to_chat": true,
+        "description": { "translate": "advancements.story.ruby_armor.description" },
+        "frame": "task",
+        "hidden": false,
+        "icon": { "item": "amurians:ruby_chestplate", "nbt": "{Damage:0}" },
+        "show_toast": true,
+        "title": { "translate": "advancements.story.ruby_armor.title" }
+    },
+    "requirements": [["has_ruby_armor"]]
+}
