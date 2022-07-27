@@ -32,7 +32,7 @@ import net.minecraft.recipe.RecipeType;
 import net.minecraft.screen.ScreenHandlerType;
 import net.minecraft.sound.BlockSoundGroup;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.math.Direction;
+import net.minecraft.util.math.Direction.Axis;
 import net.minecraft.util.registry.Registry;
 
 public class Initializer implements ModInitializer {
@@ -74,16 +74,20 @@ public class Initializer implements ModInitializer {
     );
 
     public static final Block RUBY_BLOCK = new Block(
-        FabricBlockSettings.of(Material.METAL, MapColor.BRIGHT_RED)
+        FabricBlockSettings.of(Material.METAL, MapColor.PINK)
             .strength(5.0f, 6.0f)
             .requiresTool()
             .sounds(BlockSoundGroup.METAL)
     );
-    public static final Block EMERY_TABLE = new EmeryTableBlock();
+    public static final Block EMERY_TABLE = new EmeryTableBlock(
+        FabricBlockSettings.of(Material.STONE)
+            .strength(3.5f)
+            .requiresTool()
+    );
     public static final Block AZALEA_LOG = new PillarBlock(
         FabricBlockSettings.of(
             Material.WOOD,
-            state -> state.get(PillarBlock.AXIS) == Direction.Axis.Y
+            state -> state.get(PillarBlock.AXIS) == Axis.Y
                 ? AZALEA_WOOD_COLOR
                 : AZALEA_BARK_COLOR
         )

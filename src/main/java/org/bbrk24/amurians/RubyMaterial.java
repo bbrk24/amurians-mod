@@ -23,13 +23,15 @@ public class RubyMaterial implements ArmorMaterial {
         385  // helmet
     };
 
-    private static final RubyMaterial instance = new RubyMaterial();
+    private static final Ingredient REPAIR_INGREDIENT = Ingredient.ofItems(Initializer.RUBY);
+
+    private static final RubyMaterial INSTANCE = new RubyMaterial();
 
     protected RubyMaterial() {
     }
 
     public static RubyMaterial getInstance() {
-        return instance;
+        return INSTANCE;
     }
 
     @Override
@@ -55,7 +57,7 @@ public class RubyMaterial implements ArmorMaterial {
 
     @Override
     public Ingredient getRepairIngredient() {
-        return Ingredient.ofItems(Initializer.RUBY);
+        return REPAIR_INGREDIENT;
     }
 
     @Override

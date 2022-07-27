@@ -12,7 +12,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.screen.Property;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.ScreenHandlerContext;
-import net.minecraft.screen.ScreenHandlerType;
 import net.minecraft.screen.slot.Slot;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
@@ -28,7 +27,7 @@ public class EmeryTableScreenHandler extends ScreenHandler {
     long lastTakeTime;
     final Slot inputSlot;
     final Slot outputSlot;
-    Runnable contentsChangedListener = () -> {};
+    public Runnable contentsChangedListener = () -> {};
     public final Inventory input = new SimpleInventory(1) {
         @Override
         public void markDirty() {
@@ -48,7 +47,7 @@ public class EmeryTableScreenHandler extends ScreenHandler {
         PlayerInventory playerInventory, 
         final ScreenHandlerContext context
     ) {
-        super(ScreenHandlerType.STONECUTTER, syncId);
+        super(Initializer.EMERY_TABLE_SCREEN_HANDLER_TYPE, syncId);
         int i;
         this.context = context;
         this.world = playerInventory.player.world;
@@ -160,18 +159,13 @@ public class EmeryTableScreenHandler extends ScreenHandler {
         this.sendContentUpdates();
     }
 
-    @Override
-    public ScreenHandlerType<EmeryTableScreenHandler> getType() {
-        return Initializer.EMERY_TABLE_SCREEN_HANDLER_TYPE;
-    }
-
     public void setContentsChangedListener(Runnable contentsChangedListener) {
         this.contentsChangedListener = contentsChangedListener;
     }
 
     @Override
     public boolean canInsertIntoSlot(ItemStack stack, Slot slot) {
-        return slot.inventory != this.output && super.canInsertIntoSlot(stack, slot);
+        return slot.inventory != this.output;
     }
 
     @Override

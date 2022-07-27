@@ -2,11 +2,9 @@ package org.bbrk24.amurians;
 
 import org.jetbrains.annotations.Nullable;
 
-import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.HorizontalFacingBlock;
-import net.minecraft.block.Material;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.screen.NamedScreenHandlerFactory;
@@ -25,12 +23,8 @@ import net.minecraft.world.World;
 public class EmeryTableBlock extends HorizontalFacingBlock {
     private static final Text TITLE = Text.translatable("container.emery_table");
 
-    public EmeryTableBlock() {
-        super(
-            FabricBlockSettings.of(Material.STONE)
-                .strength(3.5f)
-                .requiresTool()
-        );
+    public EmeryTableBlock(Settings settings) {
+        super(settings);
     }
     
     @Override
