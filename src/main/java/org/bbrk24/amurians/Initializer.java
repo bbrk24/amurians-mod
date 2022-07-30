@@ -53,22 +53,22 @@ public class Initializer implements ModInitializer {
     public static final Item RUBY = new Item(new FabricItemSettings().group(ItemGroup.MISC));
     public static final Item RUBY_SHARD = new Item(new FabricItemSettings().group(ItemGroup.MISC));
     public static final Item RUBY_HELMET = new ArmorItem(
-        RubyMaterial.getInstance(),
+        RubyMaterial.INSTANCE,
         EquipmentSlot.HEAD,
         new FabricItemSettings().group(ItemGroup.COMBAT)
     );
     public static final Item RUBY_CHESTPLATE = new ArmorItem(
-        RubyMaterial.getInstance(),
+        RubyMaterial.INSTANCE,
         EquipmentSlot.CHEST,
         new FabricItemSettings().group(ItemGroup.COMBAT)
     );
     public static final Item RUBY_LEGGINGS = new ArmorItem(
-        RubyMaterial.getInstance(),
+        RubyMaterial.INSTANCE,
         EquipmentSlot.LEGS,
         new FabricItemSettings().group(ItemGroup.COMBAT)
     );
     public static final Item RUBY_BOOTS = new ArmorItem(
-        RubyMaterial.getInstance(),
+        RubyMaterial.INSTANCE,
         EquipmentSlot.FEET,
         new FabricItemSettings().group(ItemGroup.COMBAT)
     );
