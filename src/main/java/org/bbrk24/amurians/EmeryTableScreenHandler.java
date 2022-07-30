@@ -1,7 +1,8 @@
 package org.bbrk24.amurians;
 
-import com.google.common.collect.Lists;
+import java.util.ArrayList;
 import java.util.List;
+
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.CraftingResultInventory;
@@ -22,7 +23,7 @@ public class EmeryTableScreenHandler extends ScreenHandler {
     private final ScreenHandlerContext context;
     private final Property selectedRecipe = Property.create();
     private final World world;
-    private List<EmeryTableRecipe> availableRecipes = Lists.newArrayList();
+    private List<EmeryTableRecipe> availableRecipes = new ArrayList<>();
     private ItemStack inputStack = ItemStack.EMPTY;
     long lastTakeTime;
     final Slot inputSlot;
@@ -44,7 +45,7 @@ public class EmeryTableScreenHandler extends ScreenHandler {
 
     public EmeryTableScreenHandler(
         int syncId,
-        PlayerInventory playerInventory, 
+        PlayerInventory playerInventory,
         final ScreenHandlerContext context
     ) {
         super(Initializer.EMERY_TABLE_SCREEN_HANDLER_TYPE, syncId);
@@ -184,7 +185,7 @@ public class EmeryTableScreenHandler extends ScreenHandler {
                 slot.onQuickTransfer(itemStack2, itemStack);
             } else if (
                 // Like I said, copy-pasted. Not quite legible.
-                index == 0 
+                index == 0
                     ? !this.insertItem(itemStack2, 2, 38, false)
                     : (
                         this.world.getRecipeManager()
