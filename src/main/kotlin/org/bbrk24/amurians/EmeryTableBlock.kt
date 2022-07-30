@@ -22,7 +22,7 @@ val TITLE = Text.translatable("container.emery_table")
 
 class EmeryTableBlock(settings: Settings) : HorizontalFacingBlock(settings) {
     override fun getPlacementState(ctx: ItemPlacementContext): BlockState? {
-        return this.getDefaultState().with(
+        return getDefaultState().with(
             Properties.HORIZONTAL_FACING,
             ctx.getPlayerFacing().getOpposite()
         )
@@ -54,8 +54,7 @@ class EmeryTableBlock(settings: Settings) : HorizontalFacingBlock(settings) {
         pos: BlockPos
     ): NamedScreenHandlerFactory? {
         return SimpleNamedScreenHandlerFactory(
-            {
-                syncId, playerInventory, _ ->
+            { syncId, playerInventory, _ ->
                 EmeryTableScreenHandler(
                     syncId,
                     playerInventory,
