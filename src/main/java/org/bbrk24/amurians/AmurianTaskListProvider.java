@@ -35,7 +35,7 @@ public class AmurianTaskListProvider {
             Pair.of(
                 2,
                 new WalkToNearestVisibleWantedItemTask<>(
-                    (float)AmurianEntity.WANDER_SPEED,
+                    (float)AmurianEntity.getWanderSpeed(),
                     false,
                     WANDER_RADIUS
                 )
@@ -70,13 +70,13 @@ public class AmurianTaskListProvider {
         }
 
         private void update(AmurianEntity amurian) {
-            Brain<AmurianEntity> brain = amurian.getBrain();
+            Brain<?> brain = amurian.getBrain();
             PlayerEntity customer = amurian.getCustomer();
             brain.remember(
                 MemoryModuleType.WALK_TARGET,
                 new WalkTarget(
                     new EntityLookTarget(customer, false),
-                    (float)AmurianEntity.WANDER_SPEED,
+                    (float)AmurianEntity.getWanderSpeed(),
                     WANDER_RADIUS
                 )
             );
@@ -98,7 +98,7 @@ public class AmurianTaskListProvider {
 
         @Override
         protected void finishRunning(ServerWorld world, AmurianEntity amurian, long l) {
-            Brain<AmurianEntity> brain = amurian.getBrain();
+            Brain<?> brain = amurian.getBrain();
             brain.forget(MemoryModuleType.WALK_TARGET);
             brain.forget(MemoryModuleType.LOOK_TARGET);
         }

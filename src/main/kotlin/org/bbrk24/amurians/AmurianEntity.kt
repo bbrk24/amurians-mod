@@ -4,8 +4,6 @@ import com.google.common.collect.ImmutableList
 import com.google.common.collect.ImmutableSet
 import com.mojang.serialization.Dynamic
 
-import java.util.List
-
 import net.minecraft.entity.EntityType
 import net.minecraft.entity.EquipmentSlot
 import net.minecraft.entity.ExperienceOrbEntity
@@ -46,10 +44,11 @@ class AmurianEntity(entityType: EntityType<out AmurianEntity>, world: World) : M
     world
 ) {
     companion object {
+        private val MAX_SPEED = 0.5
+        private val WANDER_SPEED = 0.35
+
         @JvmStatic
-        val MAX_SPEED = 0.5
-        @JvmStatic
-        val WANDER_SPEED = 0.35
+        fun getWanderSpeed(): Double = WANDER_SPEED
 
         protected val MEMORY_MODULES = ImmutableList.of(
             MemoryModuleType.PATH,
@@ -330,9 +329,7 @@ class AmurianEntity(entityType: EntityType<out AmurianEntity>, world: World) : M
     private fun getAttackSpeed(item: Item): Double {
         return item.getAttributeModifiers(EquipmentSlot.MAINHAND)
             .get(EntityAttributes.GENERIC_ATTACK_SPEED)
-            // Kotlin thinks I'm calling the IntFunction<T[]> overload rather than the T[] one
-            // it's almost like it can't see the T[] one?
-            .toArray<EntityAttributeModifier>(emptyArray())[0]
+            .toTypedArray()[0]
             .getValue()
     }
 
@@ -369,20 +366,10 @@ class AmurianEntity(entityType: EntityType<out AmurianEntity>, world: World) : M
                 return MODERATE
             }
 
-            fun fromString(s: String): BiomeGroup {
-                when (s) {
-                    "cold" -> return COLD
-                    "jungle" -> return JUNGLE
-                    "moderate" -> return MODERATE
-                    "savanna" -> return SAVANNA
-                    else -> throw IllegalArgumentException(
-                            String.format("Unrecognized biome group '%s'", s)
-                        );
-                }
-            }
+            fun fromString(s: String): BiomeGroup = valueOf(s.uppercase())
         }
 
-        override fun toString(): String = name.toLowerCase()
+        override fun toString(): String = name.lowercase()
     }
 
     enum class Profession {
@@ -393,9 +380,9 @@ class AmurianEntity(entityType: EntityType<out AmurianEntity>, world: World) : M
         WEAPONSMITH;
 
         companion object {
-            fun fromString(s: String): Profession = valueOf(s.toUpperCase())
+            fun fromString(s: String): Profession = valueOf(s.uppercase())
         }
 
-        override fun toString(): String = name.toLowerCase()
+        override fun toString(): String = name.lowercase()
     }
 }

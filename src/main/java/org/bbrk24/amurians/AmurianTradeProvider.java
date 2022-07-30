@@ -275,7 +275,7 @@ public abstract class AmurianTradeProvider {
         ),
         new TradeEntry(
             "buy_acacia_boat",
-            biome -> biome == BiomeGroup.SAVANNAH,
+            biome -> biome == BiomeGroup.SAVANNA,
             (random, level) -> new TradeOffer(
                 new ItemStack(Items.ACACIA_BOAT),
                 new ItemStack(Initializer.RUBY),
