@@ -1,7 +1,9 @@
-package org.bbrk24.amurians
+package org.bbrk24.amurians.amurian.trade
 
 import net.minecraft.util.math.random.Random
 import net.minecraft.village.TradeOffer
+
+import org.bbrk24.amurians.amurian.AmurianEntity
 
 internal data class TradeEntry(
     val id: String,

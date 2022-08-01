@@ -1,4 +1,4 @@
-package org.bbrk24.amurians
+package org.bbrk24.amurians.amurian
 
 import com.mojang.serialization.Dynamic
 
@@ -33,6 +33,8 @@ import net.minecraft.util.registry.RegistryEntry
 import net.minecraft.village.TradeOffer
 import net.minecraft.world.World
 import net.minecraft.world.biome.Biome
+
+import org.bbrk24.amurians.Initializer
 
 private val PREFERRED_FOODS = TagKey.of(Registry.ITEM_KEY, Identifier("amurians", "amurian_preferred_food"))
 private val JUNGLE_BIOMES = TagKey.of(Registry.BIOME_KEY, Identifier("amurians", "spawns_jungle_amurians"))

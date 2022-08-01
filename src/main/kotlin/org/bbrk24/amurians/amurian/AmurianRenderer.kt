@@ -1,4 +1,4 @@
-package org.bbrk24.amurians
+package org.bbrk24.amurians.amurian
 
 import net.minecraft.client.render.entity.MobEntityRenderer
 import net.minecraft.client.render.entity.EntityRendererFactory.Context

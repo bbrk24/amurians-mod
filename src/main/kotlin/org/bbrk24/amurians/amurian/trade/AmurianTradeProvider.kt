@@ -1,16 +1,20 @@
-package org.bbrk24.amurians
+package org.bbrk24.amurians.amurian.trade
 
 import com.mojang.datafixers.util.Pair
 
 import net.minecraft.util.math.random.Random
 import net.minecraft.village.TradeOffer
 
-import org.bbrk24.amurians.AmurianEntity.Profession
+import org.bbrk24.amurians.Initializer
+// I reference Profession very often in this file, and I don't reference AmurianEntity directly at
+// all, which in my mind justifies importing the inner classes instead.
+import org.bbrk24.amurians.amurian.AmurianEntity.BiomeGroup
+import org.bbrk24.amurians.amurian.AmurianEntity.Profession
 
 object AmurianTradeProvider {
     private fun chooseOffers(
         random: Random,
-        biome: AmurianEntity.BiomeGroup,
+        biome: BiomeGroup,
         currentOffers: Collection<String>,
         level: Int,
         amount: Int,
@@ -46,7 +50,7 @@ object AmurianTradeProvider {
     fun getOffersForMerchant(
         profession: Profession,
         level: Int,
-        biome: AmurianEntity.BiomeGroup,
+        biome: BiomeGroup,
         offers: Collection<String>,
         random: Random
     ): List<Pair<String, TradeOffer>> {

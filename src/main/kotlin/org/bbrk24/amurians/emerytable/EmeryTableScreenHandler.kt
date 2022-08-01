@@ -1,4 +1,4 @@
-package org.bbrk24.amurians
+package org.bbrk24.amurians.emerytable
 
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.entity.player.PlayerInventory
@@ -14,6 +14,8 @@ import net.minecraft.screen.slot.Slot
 import net.minecraft.sound.SoundCategory
 import net.minecraft.sound.SoundEvents
 import net.minecraft.world.World
+
+import org.bbrk24.amurians.Initializer
 
 class EmeryTableScreenHandler(
     syncId: Int,
@@ -42,7 +44,6 @@ class EmeryTableScreenHandler(
         override fun canInsert(stack: ItemStack): Boolean = false
 
         override fun onTakeItem(player: PlayerEntity, stack: ItemStack) {
-            Initializer.LOGGER.info("onTakeItem() called")
             stack.onCraft(player.world, player, stack.getCount())
             output.unlockLastRecipe(player)
             val itemStack = inputSlot.takeStack(1)

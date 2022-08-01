@@ -1,4 +1,4 @@
-package org.bbrk24.amurians
+package org.bbrk24.amurians.emerytable
 
 import net.minecraft.inventory.Inventory
 import net.minecraft.item.ItemStack
@@ -7,6 +7,8 @@ import net.minecraft.recipe.Ingredient
 import net.minecraft.util.Identifier
 import net.minecraft.world.World
 
+import org.bbrk24.amurians.Initializer
+
 class EmeryTableRecipe(
     id: Identifier,
     group: String,
@@ -14,7 +16,7 @@ class EmeryTableRecipe(
     output: ItemStack
 ) : CuttingRecipe(
     Initializer.EMERY_TABLE_RECIPE_TYPE,
-    Initializer.EMERY_TABLE_RECIPE_SERIALIZER,
+    EmeryTableRecipeSerializer,
     id,
     group,
     input,

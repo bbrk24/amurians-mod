@@ -1,4 +1,4 @@
-package org.bbrk24.amurians
+package org.bbrk24.amurians.amurian
 
 // Normally I would use kotlin.collections.List, but Brain#setTaskList requires this ImmutableList
 // class specifically, not just any list.

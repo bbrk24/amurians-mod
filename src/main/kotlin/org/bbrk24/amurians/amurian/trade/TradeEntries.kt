@@ -1,4 +1,4 @@
-package org.bbrk24.amurians
+package org.bbrk24.amurians.amurian.trade
 
 import kotlin.math.min
 
@@ -11,6 +11,9 @@ import net.minecraft.recipe.BrewingRecipeRegistry
 import net.minecraft.util.math.random.Random
 import net.minecraft.util.registry.Registry
 import net.minecraft.village.TradeOffer
+
+import org.bbrk24.amurians.Initializer
+import org.bbrk24.amurians.amurian.AmurianEntity
 
 private const val PRICE_MULTIPLIER = 1.0f
 

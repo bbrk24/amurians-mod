@@ -1,4 +1,4 @@
-package org.bbrk24.amurians
+package org.bbrk24.amurians.emerytable
 
 import net.minecraft.block.Block
 import net.minecraft.block.BlockState

@@ -32,6 +32,12 @@ import net.minecraft.util.Identifier
 import net.minecraft.util.math.Direction.Axis
 import net.minecraft.util.registry.Registry
 
+import org.bbrk24.amurians.amurian.AmurianEntity
+import org.bbrk24.amurians.emerytable.EmeryTableBlock
+import org.bbrk24.amurians.emerytable.EmeryTableRecipe
+import org.bbrk24.amurians.emerytable.EmeryTableRecipeSerializer
+import org.bbrk24.amurians.emerytable.EmeryTableScreenHandler
+
 private val AZALEA_BARK_COLOR = MapColor.SPRUCE_BROWN
 private val AZALEA_WOOD_COLOR = MapColor.PALE_YELLOW
 
@@ -47,6 +53,7 @@ class Initializer : ModInitializer {
         @JvmStatic
         val LOGGER = LoggerFactory.getLogger("amurians")
 
+        // items
         val RUBY = Item(FabricItemSettings().group(ItemGroup.MISC))
         val RUBY_SHARD = Item(FabricItemSettings().group(ItemGroup.MISC))
         val RUBY_HELMET = ArmorItem(
@@ -70,6 +77,7 @@ class Initializer : ModInitializer {
             FabricItemSettings().group(ItemGroup.COMBAT)
         )
 
+        // blocks
         val RUBY_BLOCK = Block(
             FabricBlockSettings.of(Material.METAL, MapColor.PINK)
                 .strength(5.0f, 6.0f)
@@ -107,16 +115,14 @@ class Initializer : ModInitializer {
         @JvmStatic
         fun getAzaleaLog(): Block = AZALEA_LOG
 
+        // entities
         val AMURIAN = FabricEntityTypeBuilder.create(SpawnGroup.CREATURE, ::AmurianEntity)
             .dimensions(EntityDimensions.fixed(0.6f, 1.8f))
             .build()
 
+        // misc
         val EMERY_TABLE_SCREEN_HANDLER_TYPE = ScreenHandlerType(::EmeryTableScreenHandler)
         val EMERY_TABLE_RECIPE_TYPE = RecipeType.register<EmeryTableRecipe>("amurians:emery_table")
-        val EMERY_TABLE_RECIPE_SERIALIZER = RecipeSerializer.register(
-            "amurians:emery_table",
-            EmeryTableRecipeSerializer
-        )
     }
 
     private fun registerBlock(block: Block, name: String, group: ItemGroup) {
@@ -130,6 +136,7 @@ class Initializer : ModInitializer {
     }
 
     override fun onInitialize() {
+        // blocks
         registerBlock(RUBY_BLOCK, "ruby_block", ItemGroup.BUILDING_BLOCKS)
         registerBlock(EMERY_TABLE, "emery_table", ItemGroup.DECORATIONS)
         registerBlock(AZALEA_LOG, "azalea_log", ItemGroup.BUILDING_BLOCKS)
@@ -145,6 +152,7 @@ class Initializer : ModInitializer {
         StrippableBlockRegistry.register(AZALEA_LOG, STRIPPED_AZALEA_LOG)
         StrippableBlockRegistry.register(AZALEA_WOOD, STRIPPED_AZALEA_WOOD)
 
+        // items
         registerItem(RUBY, "ruby")
         registerItem(RUBY_SHARD, "ruby_shard")
         registerItem(RUBY_HELMET, "ruby_helmet")
@@ -155,14 +163,19 @@ class Initializer : ModInitializer {
         FuelRegistry.INSTANCE.add(AZALEA_FENCE, 300)
         FuelRegistry.INSTANCE.add(AZALEA_FENCE_GATE, 300)
 
+        // entities
         FabricDefaultAttributeRegistry.register(AMURIAN, AmurianEntity.createAmurianAttributes())
         Registry.register(Registry.ENTITY_TYPE, Identifier("amurians", "amurian"), AMURIAN)
 
+        // screens
         Registry.register(
             Registry.SCREEN_HANDLER,
             Identifier("amurians", "emery_table"),
             EMERY_TABLE_SCREEN_HANDLER_TYPE
         )
+
+        // recipes
+        RecipeSerializer.register("amurians:emery_table", EmeryTableRecipeSerializer)
     }
 }
 
