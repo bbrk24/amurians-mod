@@ -35,16 +35,16 @@ import net.minecraft.village.TradeOffer
 import net.minecraft.world.World
 import net.minecraft.world.biome.Biome
 
-val PREFERRED_FOODS = TagKey.of(Registry.ITEM_KEY, Identifier("amurians", "amurian_preferred_food"))
-val JUNGLE_BIOMES = TagKey.of(Registry.BIOME_KEY, Identifier("amurians", "spawns_jungle_amurians"))
+private val PREFERRED_FOODS = TagKey.of(Registry.ITEM_KEY, Identifier("amurians", "amurian_preferred_food"))
+private val JUNGLE_BIOMES = TagKey.of(Registry.BIOME_KEY, Identifier("amurians", "spawns_jungle_amurians"))
 
 class AmurianEntity(entityType: EntityType<out AmurianEntity>, world: World) : MerchantEntity(
     entityType,
     world
 ) {
     companion object {
-        private val MAX_SPEED = 0.5
-        private val WANDER_SPEED = 0.35
+        private const val MAX_SPEED = 0.5
+        private const val WANDER_SPEED = 0.35
 
         @JvmStatic
         fun getWanderSpeed(): Double = WANDER_SPEED
@@ -90,7 +90,7 @@ class AmurianEntity(entityType: EntityType<out AmurianEntity>, world: World) : M
         setCanPickUpLoot(true)
     }
 
-    protected override fun afterUsing(offer: TradeOffer) {
+    override fun afterUsing(offer: TradeOffer) {
         world.spawnEntity(
             ExperienceOrbEntity(
                 world,
@@ -102,7 +102,7 @@ class AmurianEntity(entityType: EntityType<out AmurianEntity>, world: World) : M
         )
     }
 
-    protected override fun fillRecipes() {
+    override fun fillRecipes() {
         val offers = getOffers();
         if (!offers.isEmpty()) {
             return
@@ -150,13 +150,13 @@ class AmurianEntity(entityType: EntityType<out AmurianEntity>, world: World) : M
         return ActionResult.success(world.isClient);
     }
 
-    protected override fun deserializeBrain(dyn: Dynamic<*>): Brain<out AmurianEntity> {
+    override fun deserializeBrain(dyn: Dynamic<*>): Brain<out AmurianEntity> {
         val brain = createBrainProfile().deserialize(dyn)
         initBrain(brain)
         return brain
     }
 
-    protected override fun createBrainProfile(): Brain.Profile<out AmurianEntity> {
+    override fun createBrainProfile(): Brain.Profile<out AmurianEntity> {
         return Brain.createProfile(MEMORY_MODULES, SENSORS)
     }
 
@@ -204,7 +204,7 @@ class AmurianEntity(entityType: EntityType<out AmurianEntity>, world: World) : M
         return prefersNewEquipment(stack, itemStack)
     }
 
-    protected override fun prefersNewEquipment(newStack: ItemStack, oldStack: ItemStack): Boolean {
+    override fun prefersNewEquipment(newStack: ItemStack, oldStack: ItemStack): Boolean {
         if (oldStack.isEmpty()) {
             return true
         }
@@ -331,7 +331,7 @@ class AmurianEntity(entityType: EntityType<out AmurianEntity>, world: World) : M
             .getValue()
     }
 
-    protected override fun consumeItem() {
+    override fun consumeItem() {
         super.consumeItem()
         if (activeItemStack.isFood()) {
             heal(activeItemStack.getItem().getFoodComponent()!!.getHunger().toFloat())

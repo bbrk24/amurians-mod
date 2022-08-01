@@ -420,7 +420,7 @@ internal object TradeEntries {
         },
         TradeEntry(
             "sell_cooked_rabbit",
-            { it == BiomeGroup.COLD },
+            { it == AmurianEntity.BiomeGroup.COLD },
             { _, _ ->
                 TradeOffer(
                     ItemStack(Initializer.RUBY),
@@ -433,7 +433,7 @@ internal object TradeEntries {
         ),
         TradeEntry(
             "sell_raw_rabbit",
-            { it == BiomeGroup.COLD },
+            { it == AmurianEntity.BiomeGroup.COLD },
             { _, level ->
                 TradeOffer(
                     ItemStack(Initializer.RUBY),
@@ -446,7 +446,7 @@ internal object TradeEntries {
         ),
         TradeEntry(
             "sell_rabbit_stew",
-            { it == BiomeGroup.COLD },
+            { it == AmurianEntity.BiomeGroup.COLD },
             { _, level ->
                 TradeOffer(
                     ItemStack(Initializer.RUBY),
@@ -461,11 +461,11 @@ internal object TradeEntries {
     val SELLING_MID_MELEE_WEAPONS = listOf(
         TradeEntry(
             "sell_enchanted_iron_axe",
-            TradeItemHelper.makeEnchantedItemTrade(Items.IRON_AXE, 1, highXPForLevel)
+            TradeItemHelper.makeEnchantedItemTrade(Items.IRON_AXE, 1, ::highXPForLevel)
         ),
         TradeEntry(
             "sell_enchanted_iron_sword",
-            TradeItemHelper.makeEnchantedItemTrade(Items.IRON_SWORD, 2, highXPForLevel)
+            TradeItemHelper.makeEnchantedItemTrade(Items.IRON_SWORD, 2, ::highXPForLevel)
         ),
         TradeEntry("sell_diamond_sword") { _, level ->
             TradeOffer(
@@ -500,25 +500,25 @@ internal object TradeEntries {
     val SELLING_HIGH_RANGED_WEAPONS = listOf(
         TradeEntry(
             "sell_tipped_arrow",
-            TradeItemHelper.makeTippedArrowTrade(10, 5, lowXPForLevel)
+            TradeItemHelper.makeTippedArrowTrade(10, 5, ::lowXPForLevel)
         ),
         TradeEntry(
             "sell_enchanted_bow",
-            TradeItemHelper.makeEnchantedItemTrade(Items.BOW, 2, highXPForLevel)
+            TradeItemHelper.makeEnchantedItemTrade(Items.BOW, 2, ::highXPForLevel)
         ),
         TradeEntry(
             "sell_enchanted_crossbow",
-            TradeItemHelper.makeEnchantedItemTrade(Items.CROSSBOW, 3, highXPForLevel)
+            TradeItemHelper.makeEnchantedItemTrade(Items.CROSSBOW, 3, ::highXPForLevel)
         )
     )
     val SELLING_HIGH_MELEE_WEAPONS = listOf(
         TradeEntry(
             "sell_enchanted_diamond_axe",
-            TradeItemHelper.makeEnchantedItemTrade(Items.DIAMOND_AXE, 12, highXPForLevel)
+            TradeItemHelper.makeEnchantedItemTrade(Items.DIAMOND_AXE, 12, ::highXPForLevel)
         ),
         TradeEntry(
             "sell_enchanted_diamond_sword",
-            TradeItemHelper.makeEnchantedItemTrade(Items.DIAMOND_SWORD, 8, highXPForLevel)
+            TradeItemHelper.makeEnchantedItemTrade(Items.DIAMOND_SWORD, 8, ::highXPForLevel)
         )
     )
 }

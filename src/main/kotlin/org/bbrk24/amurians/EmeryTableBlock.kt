@@ -18,7 +18,7 @@ import net.minecraft.util.hit.BlockHitResult
 import net.minecraft.util.math.BlockPos
 import net.minecraft.world.World
 
-val TITLE = Text.translatable("container.emery_table")
+private val TITLE = Text.translatable("container.emery_table")
 
 class EmeryTableBlock(settings: Settings) : HorizontalFacingBlock(settings) {
     override fun getPlacementState(ctx: ItemPlacementContext): BlockState? {
@@ -28,7 +28,7 @@ class EmeryTableBlock(settings: Settings) : HorizontalFacingBlock(settings) {
         )
     }
 
-    protected override fun appendProperties(builder: StateManager.Builder<Block, BlockState>) {
+    override fun appendProperties(builder: StateManager.Builder<Block, BlockState>) {
         builder.add(Properties.HORIZONTAL_FACING)
     }
 

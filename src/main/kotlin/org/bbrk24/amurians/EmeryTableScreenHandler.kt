@@ -28,14 +28,14 @@ class EmeryTableScreenHandler(
     var contentsChangedListener = object : Runnable {
         override fun run() { }
     }
-    val input = object : SimpleInventory(1) {
+    private val input = object : SimpleInventory(1) {
         override fun markDirty() {
             super.markDirty()
             onContentChanged(this)
             contentsChangedListener.run()
         }
     }
-    val output = CraftingResultInventory()
+    private val output = CraftingResultInventory()
 
     private val inputSlot = addSlot(Slot(input, 0, 20, 33))
     private val outputSlot = addSlot(object : Slot(output, 1, 143, 33) {

@@ -11,7 +11,7 @@ import net.minecraft.client.render.entity.model.EntityModelLayer
 import net.minecraft.client.render.entity.model.VillagerResemblingModel
 import net.minecraft.util.Identifier
 
-val AMURIAN_MODEL_LAYER = EntityModelLayer(Identifier("amurians", "amurian"), "main")
+private val AMURIAN_MODEL_LAYER = EntityModelLayer(Identifier("amurians", "amurian"), "main")
 
 @Environment(EnvType.CLIENT)
 class Client : ClientModInitializer {

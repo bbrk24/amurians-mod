@@ -15,7 +15,7 @@ object AmurianTradeProvider {
         level: Int,
         amount: Int,
         entries: List<TradeEntry>
-    ): Collection<Pair<String, TradeOffer>> {
+    ): List<Pair<String, TradeOffer>> {
         // filter out the ones that require a different biome or were already chosen
         val validEntries = entries.filter {
             it.requirements(biome) && !currentOffers.contains(it.id)
@@ -49,7 +49,7 @@ object AmurianTradeProvider {
         biome: AmurianEntity.BiomeGroup,
         offers: Collection<String>,
         random: Random
-    ): Collection<Pair<String, TradeOffer>> {
+    ): List<Pair<String, TradeOffer>> {
         if (profession == Profession.UNEMPLOYED) {
             return emptyList()
         }

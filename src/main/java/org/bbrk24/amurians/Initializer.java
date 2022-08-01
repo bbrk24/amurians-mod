@@ -165,7 +165,7 @@ public class Initializer implements ModInitializer {
         assert EMERY_TABLE_RECIPE_SERIALIZER != null;
     }
 
-    private static void registerBlock(Block block, String name, ItemGroup group) {
+    private void registerBlock(Block block, String name, ItemGroup group) {
         Identifier id = new Identifier("amurians", name);
         Registry.register(Registry.BLOCK, id, block);
         Registry.register(
@@ -175,7 +175,7 @@ public class Initializer implements ModInitializer {
         );
     }
 
-    private static void registerItem(Item item, String name) {
+    private void registerItem(Item item, String name) {
         Registry.register(Registry.ITEM, new Identifier("amurians", name), item);
     }
 }
