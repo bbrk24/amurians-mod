@@ -21,6 +21,6 @@ public class TreeConfiguredFeaturesMixin {
         slice = @Slice(from = @At(value = "CONSTANT", args = "stringValue=azalea_tree"))
     )
     private static Block getAzaleaTreeOakLog() {
-        return Initializer.AZALEA_LOG;
+        return Initializer.getAzaleaLog();
     }
 }

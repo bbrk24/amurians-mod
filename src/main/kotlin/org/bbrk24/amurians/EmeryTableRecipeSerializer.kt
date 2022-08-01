@@ -10,7 +10,7 @@ import net.minecraft.util.Identifier
 import net.minecraft.util.JsonHelper
 import net.minecraft.util.registry.Registry
 
-class EmeryTableRecipeSerializer : RecipeSerializer<EmeryTableRecipe> {
+object EmeryTableRecipeSerializer : RecipeSerializer<EmeryTableRecipe> {
     override fun read(id: Identifier, json: JsonObject): EmeryTableRecipe {
         // Kotlin can't parse the @Contract annotation, but this will never return null if the third
         // argument is non-null.

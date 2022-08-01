@@ -334,6 +334,7 @@ class AmurianEntity(entityType: EntityType<out AmurianEntity>, world: World) : M
     override fun consumeItem() {
         super.consumeItem()
         if (activeItemStack.isFood()) {
+            // getFoodComponent() will not return null if isFood() is true
             heal(activeItemStack.getItem().getFoodComponent()!!.getHunger().toFloat())
             activeItemStack.decrement(1)
         }
