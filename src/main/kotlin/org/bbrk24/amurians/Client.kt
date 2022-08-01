@@ -19,14 +19,12 @@ private val AMURIAN_MODEL_LAYER = EntityModelLayer(Identifier("amurians", "amuri
 @Environment(EnvType.CLIENT)
 class Client : ClientModInitializer {
     override fun onInitializeClient() {
-        // entities
         EntityRendererRegistry.register(Initializer.AMURIAN, ::AmurianRenderer)
         EntityModelLayerRegistry.registerModelLayer(
             AMURIAN_MODEL_LAYER,
             { -> TexturedModelData.of(VillagerResemblingModel.getModelData(), 64, 64) }
         )
 
-        // screens
         HandledScreens.register(Initializer.EMERY_TABLE_SCREEN_HANDLER_TYPE, ::EmeryTableScreen)
     }
 }
