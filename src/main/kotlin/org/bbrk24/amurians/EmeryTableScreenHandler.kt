@@ -23,7 +23,7 @@ class EmeryTableScreenHandler(
     private val world = playerInventory.player.world
     private val selectedRecipe = Property.create()
     private var inputStack = ItemStack.EMPTY
-    private var availableRecipes: MutableList<EmeryTableRecipe> = ArrayList()
+    private var availableRecipes = mutableListOf<EmeryTableRecipe>()
 
     var contentsChangedListener = object : Runnable {
         override fun run() { }
@@ -49,7 +49,7 @@ class EmeryTableScreenHandler(
             if (!itemStack.isEmpty) {
                 populateResult()
             }
-            context.run({ world, pos ->
+            context.run { world, pos ->
                 val time = world.getTime()
                 if (time != lastTakeTime) {
                     world.playSound(
@@ -62,7 +62,7 @@ class EmeryTableScreenHandler(
                     )
                     lastTakeTime = time
                 }
-            })
+            }
             super.onTakeItem(player, stack)
         }
     })
@@ -70,11 +70,11 @@ class EmeryTableScreenHandler(
 
     init {
         for (i in 1..3) {
-            for (j in 0..8) {
+            for (j in 0 until 9) {
                 addSlot(Slot(playerInventory, j + i * 9, 8 + j * 18, 66 + i * 18));
             }
         }
-        for (i in 0..8) {
+        for (i in 0 until 9) {
             addSlot(Slot(playerInventory, i, 8 + i * 18, 142));
         }
         addProperty(selectedRecipe);

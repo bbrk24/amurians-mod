@@ -1,6 +1,5 @@
 package org.bbrk24.amurians
 
-import com.google.common.collect.ImmutableList
 import com.google.common.collect.ImmutableSet
 import com.mojang.serialization.Dynamic
 
@@ -50,7 +49,7 @@ class AmurianEntity(entityType: EntityType<out AmurianEntity>, world: World) : M
         @JvmStatic
         fun getWanderSpeed(): Double = WANDER_SPEED
 
-        protected val MEMORY_MODULES = ImmutableList.of(
+        protected val MEMORY_MODULES = listOf(
             MemoryModuleType.PATH,
             MemoryModuleType.DOORS_TO_CLOSE,
             MemoryModuleType.LOOK_TARGET,
@@ -59,8 +58,7 @@ class AmurianEntity(entityType: EntityType<out AmurianEntity>, world: World) : M
             MemoryModuleType.NEAREST_VISIBLE_WANTED_ITEM,
             MemoryModuleType.HOME
         )
-        protected val SENSORS: ImmutableList<SensorType<out Sensor<in AmurianEntity>>> =
-            ImmutableList.of()
+        protected val SENSORS = listOf<SensorType<out Sensor<in AmurianEntity>>>()
 
         @JvmStatic
         fun createAmurianAttributes(): DefaultAttributeContainer.Builder {
