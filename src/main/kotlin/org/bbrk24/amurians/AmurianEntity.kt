@@ -1,6 +1,5 @@
 package org.bbrk24.amurians
 
-import com.google.common.collect.ImmutableSet
 import com.mojang.serialization.Dynamic
 
 import net.minecraft.entity.EntityType
@@ -43,11 +42,8 @@ class AmurianEntity(entityType: EntityType<out AmurianEntity>, world: World) : M
     world
 ) {
     companion object {
-        private const val MAX_SPEED = 0.5
-        private const val WANDER_SPEED = 0.35
-
-        @JvmStatic
-        fun getWanderSpeed(): Double = WANDER_SPEED
+        const val MAX_SPEED = 0.5
+        const val WANDER_SPEED = 0.35
 
         protected val MEMORY_MODULES = listOf(
             MemoryModuleType.PATH,
@@ -60,7 +56,6 @@ class AmurianEntity(entityType: EntityType<out AmurianEntity>, world: World) : M
         )
         protected val SENSORS = listOf<SensorType<out Sensor<in AmurianEntity>>>()
 
-        @JvmStatic
         fun createAmurianAttributes(): DefaultAttributeContainer.Builder {
             return MobEntity.createMobAttributes()
                 .add(EntityAttributes.GENERIC_MAX_HEALTH, 18.0)
@@ -163,7 +158,7 @@ class AmurianEntity(entityType: EntityType<out AmurianEntity>, world: World) : M
     protected fun initBrain(brain: Brain<out AmurianEntity>) {
         brain.setTaskList(Activity.CORE, AmurianTaskListProvider.createCoreTasks())
 
-        brain.setCoreActivities(ImmutableSet.of(Activity.CORE))
+        brain.setCoreActivities(setOf(Activity.CORE))
         brain.refreshActivities(world.getTimeOfDay(), world.getTime())
     }
 
