@@ -2,10 +2,12 @@ package org.bbrk24.amurians.amurian
 
 import com.mojang.serialization.Dynamic
 
+import net.minecraft.entity.EntityData
 import net.minecraft.entity.EntityType
 import net.minecraft.entity.EquipmentSlot
 import net.minecraft.entity.ExperienceOrbEntity
 import net.minecraft.entity.LivingEntity
+import net.minecraft.entity.SpawnReason
 import net.minecraft.entity.ai.brain.Activity
 import net.minecraft.entity.ai.brain.Brain
 import net.minecraft.entity.ai.brain.MemoryModuleType
@@ -22,6 +24,10 @@ import net.minecraft.entity.passive.MerchantEntity
 import net.minecraft.entity.passive.PassiveEntity
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.item.*
+import net.minecraft.nbt.NbtCompound
+import net.minecraft.nbt.NbtElement
+import net.minecraft.nbt.NbtList
+import net.minecraft.nbt.NbtString
 import net.minecraft.server.world.ServerWorld
 import net.minecraft.stat.Stats
 import net.minecraft.tag.TagKey
@@ -31,10 +37,15 @@ import net.minecraft.util.Identifier
 import net.minecraft.util.registry.Registry
 import net.minecraft.util.registry.RegistryEntry
 import net.minecraft.village.TradeOffer
+import net.minecraft.world.LocalDifficulty
+import net.minecraft.world.ServerWorldAccess
 import net.minecraft.world.World
 import net.minecraft.world.biome.Biome
 
 import org.bbrk24.amurians.Initializer
+import org.bbrk24.amurians.amurian.trade.AmurianTradeProvider
+
+private val LEVEL_XP = arrayOf(10, 70, 150, 250)
 
 private val PREFERRED_FOODS = TagKey.of(Registry.ITEM_KEY, Identifier("amurians", "amurian_preferred_food"))
 private val JUNGLE_BIOMES = TagKey.of(Registry.BIOME_KEY, Identifier("amurians", "spawns_jungle_amurians"))
@@ -75,6 +86,8 @@ class AmurianEntity(entityType: EntityType<out AmurianEntity>, world: World) : M
     }
 
     private var lastActionableDamage = 0.0f
+    private var merchantData = MerchantData(1, Profession.UNEMPLOYED, BiomeGroup.MODERATE)
+    private var experience = 0
 
     init {
         setPathfindingPenalty(PathNodeType.DANGER_CACTUS, 16.0f)
@@ -87,6 +100,37 @@ class AmurianEntity(entityType: EntityType<out AmurianEntity>, world: World) : M
         setCanPickUpLoot(true)
     }
 
+    override fun initialize(
+        world: ServerWorldAccess,
+        difficulty: LocalDifficulty,
+        reason: SpawnReason,
+        entityData: EntityData?,
+        entityNbt: NbtCompound?
+    ): EntityData? {
+        merchantData.biome = BiomeGroup.of(world.getBiome(getBlockPos()))
+        return super.initialize(world, difficulty, reason, entityData, entityNbt)
+    }
+
+    override fun getExperience(): Int = experience
+
+    override fun writeCustomDataToNbt(nbt: NbtCompound) {
+        super.writeCustomDataToNbt(nbt)
+        merchantData.writeToNbt(nbt)
+        nbt.putInt("Xp", experience)
+    }
+
+    override fun readCustomDataFromNbt(nbt: NbtCompound) {
+        super.readCustomDataFromNbt(nbt)
+        merchantData = MerchantData(nbt)
+        experience = nbt.getInt("Xp")
+
+        // temporary code to allow it to autofill novice trades when I use the /data command
+        // TODO: add automatic profession assignment
+        if (merchantData.profession != Profession.UNEMPLOYED && getOffers().isEmpty()) {
+            fillRecipes()
+        }
+    }
+
     override fun afterUsing(offer: TradeOffer) {
         world.spawnEntity(
             ExperienceOrbEntity(
@@ -97,34 +141,27 @@ class AmurianEntity(entityType: EntityType<out AmurianEntity>, world: World) : M
                 3 + random.nextInt(4)
             )
         )
+        experience += offer.getMerchantExperience()
+        if (merchantData.level < 5 && experience >= LEVEL_XP[merchantData.level - 1]) {
+            experience -= LEVEL_XP[merchantData.level - 1]
+            merchantData.level += 1
+            fillRecipes()
+        }
     }
 
     override fun fillRecipes() {
-        val offers = getOffers();
-        if (!offers.isEmpty()) {
-            return
+        val offers = this.offers ?: return
+        val newOffers = AmurianTradeProvider.getOffersForMerchant(
+            merchantData.profession,
+            merchantData.level,
+            merchantData.biome,
+            merchantData.offerIDs,
+            random
+        )
+        for (offerPair in newOffers) {
+            merchantData.offerIDs.add(offerPair.getFirst())
+            offers.add(offerPair.getSecond())
         }
-
-        offers.add(
-            TradeOffer(
-                ItemStack(Items.COAL, 15),
-                ItemStack.EMPTY,
-                ItemStack(Initializer.RUBY),
-                16,
-                0,
-                1.0f
-            )
-        )
-        offers.add(
-            TradeOffer(
-                ItemStack(Initializer.RUBY),
-                ItemStack.EMPTY,
-                ItemStack(Items.COOKED_COD, 15),
-                16,
-                0,
-                1.0f
-            )
-        )
     }
 
     override fun createChild(serverWorld: ServerWorld, otherParent: PassiveEntity): PassiveEntity? {
@@ -140,9 +177,15 @@ class AmurianEntity(entityType: EntityType<out AmurianEntity>, world: World) : M
         if (hand == Hand.MAIN_HAND) {
             player.incrementStat(Stats.TALKED_TO_VILLAGER)
         }
-        if (!(getOffers().isEmpty() || world.isClient)) {
+        if (
+            !(
+                merchantData.profession == Profession.UNEMPLOYED ||
+                getOffers().isEmpty() ||
+                world.isClient
+            )
+        ) {
             setCustomer(player);
-            sendOffers(player, getDisplayName(), 1);
+            sendOffers(player, getDisplayName(), merchantData.level);
         }
         return ActionResult.success(world.isClient);
     }
@@ -380,5 +423,75 @@ class AmurianEntity(entityType: EntityType<out AmurianEntity>, world: World) : M
         }
 
         override fun toString(): String = name.lowercase()
+    }
+
+    protected class MerchantData private constructor() {
+        var level = 1
+        var profession = Profession.UNEMPLOYED
+
+        lateinit var biome: BiomeGroup
+        lateinit var offerIDs: MutableSet<String>
+            private set
+
+        public constructor(
+            level: Int,
+            profession: Profession,
+            biome: BiomeGroup,
+            offerIDs: MutableSet<String>
+        ) : this() {
+            this.level = level
+            this.profession = profession
+            this.biome = biome
+            this.offerIDs = offerIDs
+        }
+
+        constructor(level: Int, profession: Profession, biome: BiomeGroup) : this(
+            level,
+            profession,
+            biome,
+            mutableSetOf()
+        ) { }
+
+        public constructor(nbt: NbtCompound) : this() {
+            this.offerIDs = nbt.getList("OfferIDs", NbtElement.STRING_TYPE.toInt())
+                .map { it.asString() }
+                .toMutableSet()
+
+            try {
+                this.biome = BiomeGroup.fromString(nbt.getString("BiomeType"))
+            } catch (e: RuntimeException) { }
+
+            if (nbt.contains("Level")) {
+                this.level = nbt.getInt("Level")
+            }
+
+            if (nbt.contains("Profession")) {
+                val str = nbt.getString("Profession")
+                try {
+                    this.profession = Profession.fromString(str)
+                } catch (e: IllegalArgumentException) {
+                    Initializer.LOGGER.warn(
+                        "Illegal profession '$str' in NBT, defaulting to unemployed"
+                    )
+                }
+            }
+        }
+
+        fun writeToNbt(nbt: NbtCompound) {
+            nbt.putInt("Level", level)
+            nbt.putString("BiomeType", biome.toString())
+
+            // convert offerIDs to an NbtList
+            // the NbtList constructor that uses an existing list is internal, so I have to loop
+            val offerIDsNBT = NbtList()
+            for (offerID in offerIDs) {
+                offerIDsNBT.add(NbtString.of(offerID))
+            }
+            nbt.put("OfferIDs", offerIDsNBT)
+
+            if (profession != Profession.UNEMPLOYED) {
+                nbt.putString("Profession", profession.toString())
+            }
+        }
     }
 }

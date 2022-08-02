@@ -7,7 +7,7 @@ import net.minecraft.village.TradeOffer
 
 import org.bbrk24.amurians.Initializer
 // I reference Profession very often in this file, and I don't reference AmurianEntity directly at
-// all, which in my mind justifies importing the inner classes instead.
+// all, which in my mind justifies importing the nested classes instead.
 import org.bbrk24.amurians.amurian.AmurianEntity.BiomeGroup
 import org.bbrk24.amurians.amurian.AmurianEntity.Profession
 

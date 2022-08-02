@@ -27,9 +27,7 @@ class EmeryTableScreenHandler(
     private var inputStack = ItemStack.EMPTY
     private var availableRecipes = mutableListOf<EmeryTableRecipe>()
 
-    var contentsChangedListener = object : Runnable {
-        override fun run() { }
-    }
+    var contentsChangedListener = Runnable { -> }
     private val input = object : SimpleInventory(1) {
         override fun markDirty() {
             super.markDirty()
