@@ -67,7 +67,12 @@ class AmurianEntity(entityType: EntityType<out AmurianEntity>, world: World) : M
             MemoryModuleType.NEAREST_VISIBLE_WANTED_ITEM,
             MemoryModuleType.HOME
         )
-        protected val SENSORS = listOf<SensorType<out Sensor<in AmurianEntity>>>()
+        protected val SENSORS = listOf(
+            SensorType.NEAREST_LIVING_ENTITIES,
+            SensorType.NEAREST_PLAYERS,
+            SensorType.NEAREST_ITEMS,
+            SensorType.NEAREST_BED
+        )
 
         fun createAmurianAttributes(): DefaultAttributeContainer.Builder {
             return MobEntity.createMobAttributes()
@@ -378,6 +383,21 @@ class AmurianEntity(entityType: EntityType<out AmurianEntity>, world: World) : M
             heal(activeItemStack.getItem().getFoodComponent()!!.getHunger().toFloat())
             activeItemStack.decrement(1)
         }
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    override fun getBrain(): Brain<AmurianEntity> = super.getBrain() as Brain<AmurianEntity>
+
+    override fun mobTick() {
+        world.getProfiler().push("amurianBrain")
+        getBrain().tick(world as ServerWorld, this)
+        world.getProfiler().pop()
+
+        if (merchantData.profession == Profession.UNEMPLOYED && hasCustomer()) {
+            resetCustomer()
+        }
+
+        super.mobTick()
     }
 
     enum class BiomeGroup {
