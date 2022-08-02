@@ -16,36 +16,18 @@ object RubyMaterial : ArmorMaterial {
 
     private val REPAIR_INGREDIENT = Ingredient.ofItems(Initializer.RUBY)
 
-    override fun getDurability(slot: EquipmentSlot): Int {
-        return DURABILITIES[slot.getEntitySlotId()]
-    }
+    override fun getDurability(slot: EquipmentSlot) = DURABILITIES[slot.getEntitySlotId()]
 
     override fun getProtectionAmount(slot: EquipmentSlot): Int {
         return PROTECTION_AMOUNTS[slot.getEntitySlotId()]
     }
 
-    override fun getRepairIngredient(): Ingredient {
-        return REPAIR_INGREDIENT
-    }
+    override fun getRepairIngredient() = REPAIR_INGREDIENT
+    override fun getEnchantability() = 10
+    override fun getName() = "ruby"
+    override fun getToughness() = 1.0f
+    override fun getKnockbackResistance() = 0.0f
 
-    override fun getEnchantability(): Int {
-        return 10
-    }
-
-    override fun getEquipSound(): SoundEvent {
-        // FIXME: Placeholder until specific sounds are recorded
-        return SoundEvents.ITEM_ARMOR_EQUIP_GENERIC
-    }
-
-    override fun getName(): String {
-        return "ruby"
-    }
-
-    override fun getToughness(): Float {
-        return 1.0f
-    }
-
-    override fun getKnockbackResistance(): Float {
-        return 0.0f
-    }
+    // FIXME: Placeholder until specific sounds are recorded
+    override fun getEquipSound() = SoundEvents.ITEM_ARMOR_EQUIP_GENERIC
 }

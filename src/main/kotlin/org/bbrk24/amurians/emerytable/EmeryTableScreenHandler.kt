@@ -25,9 +25,10 @@ class EmeryTableScreenHandler(
     private val world = playerInventory.player.world
     private val selectedRecipe = Property.create()
     private var inputStack = ItemStack.EMPTY
-    private var availableRecipes = mutableListOf<EmeryTableRecipe>()
+    var availableRecipes = mutableListOf<EmeryTableRecipe>()
+        private set
 
-    var contentsChangedListener = Runnable { -> }
+    var contentsChangedListener = Runnable { }
     private val input = object : SimpleInventory(1) {
         override fun markDirty() {
             super.markDirty()
@@ -39,7 +40,7 @@ class EmeryTableScreenHandler(
 
     private val inputSlot = addSlot(Slot(input, 0, 20, 33))
     private val outputSlot = addSlot(object : Slot(output, 1, 143, 33) {
-        override fun canInsert(stack: ItemStack): Boolean = false
+        override fun canInsert(stack: ItemStack) = false
 
         override fun onTakeItem(player: PlayerEntity, stack: ItemStack) {
             stack.onCraft(player.world, player, stack.getCount())
@@ -103,7 +104,7 @@ class EmeryTableScreenHandler(
         }
     }
 
-    private fun isInBounds(i: Int): Boolean = i >= 0 && i < availableRecipes.size
+    private fun isInBounds(i: Int) = i >= 0 && i < availableRecipes.size
 
     fun populateResult() {
         if (!availableRecipes.isEmpty() && isInBounds(selectedRecipe.get())) {
@@ -116,10 +117,9 @@ class EmeryTableScreenHandler(
         sendContentUpdates()
     }
 
-    fun getSelectedRecipe(): Int = selectedRecipe.get()
-    fun getAvailableRecipes(): List<EmeryTableRecipe> = availableRecipes
-    fun getAvailableRecipeCount(): Int = availableRecipes.size
-    fun canCraft(): Boolean = inputSlot.hasStack() && !availableRecipes.isEmpty()
+    fun getSelectedRecipe() = selectedRecipe.get()
+    fun getAvailableRecipeCount() = availableRecipes.size
+    fun canCraft() = inputSlot.hasStack() && !availableRecipes.isEmpty()
 
     override fun canInsertIntoSlot(unused: ItemStack, slot: Slot) = slot.inventory != output
 

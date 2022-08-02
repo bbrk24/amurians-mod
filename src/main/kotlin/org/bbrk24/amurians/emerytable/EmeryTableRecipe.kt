@@ -22,15 +22,8 @@ class EmeryTableRecipe(
     input,
     output
 ) {
-    override fun matches(inventory: Inventory, world: World): Boolean {
-        return input.test(inventory.getStack(0))
-    }
+    override fun matches(inventory: Inventory, world: World) = input.test(inventory.getStack(0))
+    override fun createIcon() = ItemStack(Initializer.EMERY_TABLE)
 
-    override fun createIcon(): ItemStack {
-        return ItemStack(Initializer.EMERY_TABLE)
-    }
-
-    fun getInput(): Ingredient {
-        return input
-    }
+    fun getInput() = input
 }

@@ -17,14 +17,14 @@ import org.bbrk24.amurians.amurian.AmurianEntity
 
 private const val PRICE_MULTIPLIER = 1.0f
 
-private fun lowXPForLevel(level: Int): Int = when (level) {
+private fun lowXPForLevel(level: Int) = when (level) {
     1 -> 1
     2 -> 5
     3 -> 10
     4 -> 15
     else -> 0
 }
-private fun highXPForLevel(level: Int): Int = when (level) {
+private fun highXPForLevel(level: Int) = when (level) {
     1 -> 2
     2 -> 10
     3 -> 20

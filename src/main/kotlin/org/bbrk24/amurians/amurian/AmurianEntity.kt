@@ -116,7 +116,7 @@ class AmurianEntity(entityType: EntityType<out AmurianEntity>, world: World) : M
         return super.initialize(world, difficulty, reason, entityData, entityNbt)
     }
 
-    override fun getExperience(): Int = experience
+    override fun getExperience() = experience
 
     override fun writeCustomDataToNbt(nbt: NbtCompound) {
         super.writeCustomDataToNbt(nbt)
@@ -369,12 +369,10 @@ class AmurianEntity(entityType: EntityType<out AmurianEntity>, world: World) : M
         return true
     }
 
-    private fun getAttackSpeed(item: Item): Double {
-        return item.getAttributeModifiers(EquipmentSlot.MAINHAND)
-            .get(EntityAttributes.GENERIC_ATTACK_SPEED)
-            .toTypedArray()[0]
-            .getValue()
-    }
+    private fun getAttackSpeed(item: Item) = item.getAttributeModifiers(EquipmentSlot.MAINHAND)
+        .get(EntityAttributes.GENERIC_ATTACK_SPEED)
+        .toTypedArray()[0]
+        .getValue()
 
     override fun consumeItem() {
         super.consumeItem()
@@ -425,10 +423,10 @@ class AmurianEntity(entityType: EntityType<out AmurianEntity>, world: World) : M
                 return MODERATE
             }
 
-            fun fromString(s: String): BiomeGroup = valueOf(s.uppercase())
+            fun fromString(s: String) = valueOf(s.uppercase())
         }
 
-        override fun toString(): String = name.lowercase()
+        override fun toString() = name.lowercase()
     }
 
     enum class Profession {
@@ -439,10 +437,10 @@ class AmurianEntity(entityType: EntityType<out AmurianEntity>, world: World) : M
         WEAPONSMITH;
 
         companion object {
-            fun fromString(s: String): Profession = valueOf(s.uppercase())
+            fun fromString(s: String) = valueOf(s.uppercase())
         }
 
-        override fun toString(): String = name.lowercase()
+        override fun toString() = name.lowercase()
     }
 
     protected class MerchantData private constructor() {

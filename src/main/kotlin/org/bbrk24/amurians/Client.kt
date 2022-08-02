@@ -22,7 +22,7 @@ class Client : ClientModInitializer {
         EntityRendererRegistry.register(Initializer.AMURIAN, ::AmurianRenderer)
         EntityModelLayerRegistry.registerModelLayer(
             AMURIAN_MODEL_LAYER,
-            { -> TexturedModelData.of(VillagerResemblingModel.getModelData(), 64, 64) }
+            { TexturedModelData.of(VillagerResemblingModel.getModelData(), 64, 64) }
         )
 
         HandledScreens.register(Initializer.EMERY_TABLE_SCREEN_HANDLER_TYPE, ::EmeryTableScreen)
