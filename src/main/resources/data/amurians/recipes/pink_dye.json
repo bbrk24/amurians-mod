@@ -1,0 +1,6 @@
+{
+    "type": "minecraft:crafting_shapeless",
+    "group": "pink_dye",
+    "ingredients": [{ "item": "amurians:dye_medium" }, { "item": "amurians:pink_powder_dye" }],
+    "result": { "item": "minecraft:pink_dye", "count": 3 }
+}

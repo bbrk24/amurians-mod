@@ -1,0 +1,6 @@
+{
+    "type": "minecraft:crafting_shapeless",
+    "group": "dye_dust",
+    "ingredients": [{ "item": "amurians:magenta_powder_dye" }],
+    "result": { "item": "amurians:magenta_dye_dust", "count": 4 }
+}

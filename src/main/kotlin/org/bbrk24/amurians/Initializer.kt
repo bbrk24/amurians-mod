@@ -44,10 +44,13 @@ import net.minecraft.item.FoodComponents
 import net.minecraft.item.Item
 import net.minecraft.item.ItemConvertible
 import net.minecraft.item.ItemGroup
+import net.minecraft.item.Items
 import net.minecraft.recipe.RecipeSerializer
 import net.minecraft.recipe.RecipeType
 import net.minecraft.screen.ScreenHandlerType
 import net.minecraft.sound.BlockSoundGroup
+import net.minecraft.tag.TagKey
+import net.minecraft.util.DyeColor
 import net.minecraft.util.Identifier
 import net.minecraft.util.math.Direction.Axis
 import net.minecraft.util.registry.Registry
@@ -155,9 +158,110 @@ class Initializer : ModInitializer {
             HISHAI_PLANT,
             FabricItemSettings().group(ItemGroup.MISC)
         )
+        val DYE_MEDIUM = Item(
+            FabricItemSettings().group(ItemGroup.MISC)
+                .maxCount(16)
+                .recipeRemainder(Items.GLASS_BOTTLE)
+        )
+        val OAK_BARK = Item(FabricItemSettings().group(ItemGroup.MISC))
+        val BIRCH_BARK = Item(FabricItemSettings().group(ItemGroup.MISC))
+        val SPRUCE_BARK = Item(FabricItemSettings().group(ItemGroup.MISC))
+        val JUNGLE_BARK = Item(FabricItemSettings().group(ItemGroup.MISC))
+        val ACACIA_BARK = Item(FabricItemSettings().group(ItemGroup.MISC))
+        val DARK_OAK_BARK = Item(FabricItemSettings().group(ItemGroup.MISC))
+        val MANGROVE_BARK = Item(FabricItemSettings().group(ItemGroup.MISC))
+        val AZALEA_BARK = Item(FabricItemSettings().group(ItemGroup.MISC))
+        val WHITE_POWDER_DYE = PowderDyeItem(
+            DyeColor.WHITE,
+            FabricItemSettings().group(ItemGroup.MISC)
+        )
+        val ORANGE_POWDER_DYE = PowderDyeItem(
+            DyeColor.ORANGE,
+            FabricItemSettings().group(ItemGroup.MISC)
+        )
+        val MAGENTA_POWDER_DYE = PowderDyeItem(
+            DyeColor.MAGENTA,
+            FabricItemSettings().group(ItemGroup.MISC)
+        )
+        val LIGHT_BLUE_POWDER_DYE = PowderDyeItem(
+            DyeColor.LIGHT_BLUE,
+            FabricItemSettings().group(ItemGroup.MISC)
+        )
+        val YELLOW_POWDER_DYE = PowderDyeItem(
+            DyeColor.YELLOW,
+            FabricItemSettings().group(ItemGroup.MISC)
+        )
+        val LIME_POWDER_DYE = PowderDyeItem(
+            DyeColor.LIME,
+            FabricItemSettings().group(ItemGroup.MISC)
+        )
+        val PINK_POWDER_DYE = PowderDyeItem(
+            DyeColor.PINK,
+            FabricItemSettings().group(ItemGroup.MISC)
+        )
+        val GRAY_POWDER_DYE = PowderDyeItem(
+            DyeColor.GRAY,
+            FabricItemSettings().group(ItemGroup.MISC)
+        )
+        val LIGHT_GRAY_POWDER_DYE = PowderDyeItem(
+            DyeColor.LIGHT_GRAY,
+            FabricItemSettings().group(ItemGroup.MISC)
+        )
+        val CYAN_POWDER_DYE = PowderDyeItem(
+            DyeColor.CYAN,
+            FabricItemSettings().group(ItemGroup.MISC)
+        )
+        val PURPLE_POWDER_DYE = PowderDyeItem(
+            DyeColor.PURPLE,
+            FabricItemSettings().group(ItemGroup.MISC)
+        )
+        val BLUE_POWDER_DYE = PowderDyeItem(
+            DyeColor.BLUE,
+            FabricItemSettings().group(ItemGroup.MISC)
+        )
+        val BROWN_POWDER_DYE = PowderDyeItem(
+            DyeColor.BROWN,
+            FabricItemSettings().group(ItemGroup.MISC)
+        )
+        val GREEN_POWDER_DYE = PowderDyeItem(
+            DyeColor.GREEN,
+            FabricItemSettings().group(ItemGroup.MISC)
+        )
+        val RED_POWDER_DYE = PowderDyeItem(
+            DyeColor.RED,
+            FabricItemSettings().group(ItemGroup.MISC)
+        )
+        val BLACK_POWDER_DYE = PowderDyeItem(
+            DyeColor.BLACK,
+            FabricItemSettings().group(ItemGroup.MISC)
+        )
+        val WHITE_DYE_DUST = Item(FabricItemSettings().group(ItemGroup.MISC))
+        val ORANGE_DYE_DUST = Item(FabricItemSettings().group(ItemGroup.MISC))
+        val MAGENTA_DYE_DUST = Item(FabricItemSettings().group(ItemGroup.MISC))
+        val LIGHT_BLUE_DYE_DUST = Item(FabricItemSettings().group(ItemGroup.MISC))
+        val YELLOW_DYE_DUST = Item(FabricItemSettings().group(ItemGroup.MISC))
+        val LIME_DYE_DUST = Item(FabricItemSettings().group(ItemGroup.MISC))
+        val PINK_DYE_DUST = Item(FabricItemSettings().group(ItemGroup.MISC))
+        val GRAY_DYE_DUST = Item(FabricItemSettings().group(ItemGroup.MISC))
+        val LIGHT_GRAY_DYE_DUST = Item(FabricItemSettings().group(ItemGroup.MISC))
+        val CYAN_DYE_DUST = Item(FabricItemSettings().group(ItemGroup.MISC))
+        val PURPLE_DYE_DUST = Item(FabricItemSettings().group(ItemGroup.MISC))
+        val BLUE_DYE_DUST = Item(FabricItemSettings().group(ItemGroup.MISC))
+        val BROWN_DYE_DUST = Item(FabricItemSettings().group(ItemGroup.MISC))
+        val GREEN_DYE_DUST = Item(FabricItemSettings().group(ItemGroup.MISC))
+        val RED_DYE_DUST = Item(FabricItemSettings().group(ItemGroup.MISC))
+        val BLACK_DYE_DUST = Item(FabricItemSettings().group(ItemGroup.MISC))
+
+        val BARK_TAG = TagKey.of(Registry.ITEM_KEY, Identifier("amurians", "bark"))
 
         @JvmStatic
         fun getHishaiSeeds(): ItemConvertible = HISHAI_SEEDS
+
+        @JvmStatic
+        fun getDyeMedium() = DYE_MEDIUM
+
+        @JvmStatic
+        fun getBarkTag() = BARK_TAG
 
         // entities
         val AMURIAN = FabricEntityTypeBuilder.create(SpawnGroup.CREATURE, ::AmurianEntity)
@@ -208,12 +312,62 @@ class Initializer : ModInitializer {
         registerItem(RUBY_BOOTS, "ruby_boots")
         registerItem(HISHAI_FRUIT, "hishai_fruit")
         registerItem(HISHAI_SEEDS, "hishai_seeds")
+        registerItem(DYE_MEDIUM, "dye_medium")
+        registerItem(OAK_BARK, "oak_bark")
+        registerItem(BIRCH_BARK, "birch_bark")
+        registerItem(SPRUCE_BARK, "spruce_bark")
+        registerItem(JUNGLE_BARK, "jungle_bark")
+        registerItem(ACACIA_BARK, "acacia_bark")
+        registerItem(DARK_OAK_BARK, "dark_oak_bark")
+        registerItem(MANGROVE_BARK, "mangrove_bark")
+        registerItem(AZALEA_BARK, "azalea_bark")
+        registerItem(WHITE_POWDER_DYE, "white_powder_dye")
+        registerItem(ORANGE_POWDER_DYE, "orange_powder_dye")
+        registerItem(MAGENTA_POWDER_DYE, "magenta_powder_dye")
+        registerItem(LIGHT_BLUE_POWDER_DYE, "light_blue_powder_dye")
+        registerItem(YELLOW_POWDER_DYE, "yellow_powder_dye")
+        registerItem(LIME_POWDER_DYE, "lime_powder_dye")
+        registerItem(PINK_POWDER_DYE, "pink_powder_dye")
+        registerItem(GRAY_POWDER_DYE, "gray_powder_dye")
+        registerItem(LIGHT_GRAY_POWDER_DYE, "light_gray_powder_dye")
+        registerItem(CYAN_POWDER_DYE, "cyan_powder_dye")
+        registerItem(PURPLE_POWDER_DYE, "purple_powder_dye")
+        registerItem(BLUE_POWDER_DYE, "blue_powder_dye")
+        registerItem(BROWN_POWDER_DYE, "brown_powder_dye")
+        registerItem(GREEN_POWDER_DYE, "green_powder_dye")
+        registerItem(RED_POWDER_DYE, "red_powder_dye")
+        registerItem(BLACK_POWDER_DYE, "black_powder_dye")
+        registerItem(WHITE_DYE_DUST, "white_dye_dust")
+        registerItem(ORANGE_DYE_DUST, "orange_dye_dust")
+        registerItem(MAGENTA_DYE_DUST, "magenta_dye_dust")
+        registerItem(LIGHT_BLUE_DYE_DUST, "light_blue_dye_dust")
+        registerItem(YELLOW_DYE_DUST, "yellow_dye_dust")
+        registerItem(LIME_DYE_DUST, "lime_dye_dust")
+        registerItem(PINK_DYE_DUST, "pink_dye_dust")
+        registerItem(GRAY_DYE_DUST, "gray_dye_dust")
+        registerItem(LIGHT_GRAY_DYE_DUST, "light_gray_dye_dust")
+        registerItem(CYAN_DYE_DUST, "cyan_dye_dust")
+        registerItem(PURPLE_DYE_DUST, "purple_dye_dust")
+        registerItem(BLUE_DYE_DUST, "blue_dye_dust")
+        registerItem(BROWN_DYE_DUST, "brown_dye_dust")
+        registerItem(GREEN_DYE_DUST, "green_dye_dust")
+        registerItem(RED_DYE_DUST, "red_dye_dust")
+        registerItem(BLACK_DYE_DUST, "black_dye_dust")
 
         FuelRegistry.INSTANCE.add(AZALEA_FENCE, 300)
         FuelRegistry.INSTANCE.add(AZALEA_FENCE_GATE, 300)
+        FuelRegistry.INSTANCE.add(BARK_TAG, 100)
 
         CompostingChanceRegistry.INSTANCE.add(HISHAI_FRUIT, 0.65f)
         CompostingChanceRegistry.INSTANCE.add(HISHAI_PLANT, 0.3f)
+        CompostingChanceRegistry.INSTANCE.add(OAK_BARK, 0.5f)
+        CompostingChanceRegistry.INSTANCE.add(BIRCH_BARK, 0.5f)
+        CompostingChanceRegistry.INSTANCE.add(SPRUCE_BARK, 0.5f)
+        CompostingChanceRegistry.INSTANCE.add(JUNGLE_BARK, 0.5f)
+        CompostingChanceRegistry.INSTANCE.add(ACACIA_BARK, 0.5f)
+        CompostingChanceRegistry.INSTANCE.add(DARK_OAK_BARK, 0.5f)
+        CompostingChanceRegistry.INSTANCE.add(MANGROVE_BARK, 0.5f)
+        CompostingChanceRegistry.INSTANCE.add(AZALEA_BARK, 0.5f)
 
         // entities
         FabricDefaultAttributeRegistry.register(AMURIAN, AmurianEntity.createAmurianAttributes())
@@ -230,4 +384,3 @@ class Initializer : ModInitializer {
         RecipeSerializer.register("amurians:emery_table", EmeryTableRecipeSerializer)
     }
 }
-

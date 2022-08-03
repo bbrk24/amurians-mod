@@ -1,0 +1,15 @@
+{
+    "parent": "minecraft:recipes/root",
+    "criteria": {
+        "has_fruit": {
+            "conditions": { "items": [{ "items": ["amurians:hishai_fruit"] }] },
+            "trigger": "minecraft:inventory_changed"
+        },
+        "has_the_recipe": {
+            "conditions": { "recipe": "amurians:cyan_powder_dye_from_hishai" },
+            "trigger": "minecraft:recipe_unlocked"
+        }
+    },
+    "requirements": [["has_fruit", "has_the_recipe"]],
+    "rewards": { "recipes": ["amurians:cyan_powder_dye_from_hishai"] }
+}

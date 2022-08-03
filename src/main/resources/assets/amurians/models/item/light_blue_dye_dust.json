@@ -1,0 +1,4 @@
+{
+    "parent": "minecraft:item/generated",
+    "textures": { "layer0": "amurians:item/light_blue_dye_dust" }
+}

@@ -1,0 +1,15 @@
+{
+    "parent": "minecraft:recipes/root",
+    "criteria": {
+        "has_dye": {
+            "conditions": { "items": [{ "items": ["amurians:black_powder_dye"] }] },
+            "trigger": "minecraft:inventory_changed"
+        },
+        "has_the_recipe": {
+            "conditions": { "recipe": "amurians:black_dye_dust_from_powder_dye" },
+            "trigger": "minecraft:recipe_unlocked"
+        }
+    },
+    "requirements": [["has_dye", "has_the_recipe"]],
+    "rewards": { "recipes": ["amurians:black_dye_dust_from_powder_dye"] }
+}

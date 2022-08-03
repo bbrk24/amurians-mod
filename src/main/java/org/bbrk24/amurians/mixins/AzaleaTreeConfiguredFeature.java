@@ -26,7 +26,7 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.Slice;
 
 @Mixin(TreeConfiguredFeatures.class)
-public class TreeConfiguredFeaturesMixin {
+public abstract class AzaleaTreeConfiguredFeature {
     @Redirect(
         method = "<clinit>",
         at = @At(

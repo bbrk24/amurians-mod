@@ -1,0 +1,6 @@
+{
+    "type": "minecraft:crafting_shapeless",
+    "group": "brown_dye",
+    "ingredients": [{ "item": "amurians:dye_medium" }, { "item": "amurians:brown_powder_dye" }],
+    "result": { "item": "minecraft:brown_dye", "count": 3 }
+}

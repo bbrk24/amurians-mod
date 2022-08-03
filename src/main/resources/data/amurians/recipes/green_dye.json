@@ -1,0 +1,5 @@
+{
+    "type": "minecraft:crafting_shapeless",
+    "ingredients": [{ "item": "amurians:dye_medium" }, { "item": "amurians:green_powder_dye" }],
+    "result": { "item": "minecraft:green_dye", "count": 3 }
+}

@@ -1,0 +1,4 @@
+{
+    "parent": "minecraft:item/generated",
+    "textures": { "layer0": "amurians:item/magenta_powder_dye" }
+}

@@ -1,0 +1,8 @@
+{
+    "type": "minecraft:smelting",
+    "group": "dye_dust",
+    "cookingtime": 200,
+    "experience": 0.1,
+    "ingredient": { "item": "minecraft:light_gray_dye" },
+    "result": "amurians:light_gray_dye_dust"
+}

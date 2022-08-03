@@ -1,0 +1,6 @@
+{
+    "type": "minecraft:crafting_shapeless",
+    "group": "red_dye",
+    "ingredients": [{ "item": "amurians:dye_medium" }, { "item": "amurians:red_powder_dye" }],
+    "result": { "item": "minecraft:red_dye", "count": 3 }
+}

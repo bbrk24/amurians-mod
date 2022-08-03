@@ -4,10 +4,18 @@
     "package": "org.bbrk24.amurians.mixins",
     "compatibilityLevel": "JAVA_17",
     "mixins": [
-        "TreeConfiguredFeaturesMixin",
-        "LayFrogSpawnTaskMixin",
+        "AzaleaTreeConfiguredFeature",
+        "FrogSpawnBugFix",
         "HishaiPlantFeature",
-        "ChickenFoodMixin"
+        "ChickenFoodMixin",
+        "dyes.DyeMediumBrewingRecipe",
+        "BarkStrippingMixin",
+        "dyes.DyeItemMapFix",
+        "dyes.ArmorDyeRecipeFix",
+        "dyes.loom.AnonymousMixin",
+        "dyes.loom.LoomScreenHandlerMixin",
+        "dyes.fireworks.FireworkStarRecipeMixin",
+        "dyes.fireworks.FireworkStarFadeRecipeMixin"
     ],
     "injectors": {
         "defaultRequire": 1

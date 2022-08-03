@@ -29,7 +29,7 @@ import net.minecraft.entity.ai.brain.task.LayFrogSpawnTask;
 import net.minecraft.state.property.Properties;
 
 @Mixin(LayFrogSpawnTask.class)
-public class LayFrogSpawnTaskMixin {
+public abstract class FrogSpawnBugFix {
     @Redirect(
         method = "run(Lnet/minecraft/server/world/ServerWorld;Lnet/minecraft/entity/passive/FrogEntity;J)V",
         at = @At(

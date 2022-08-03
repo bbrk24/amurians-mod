@@ -1,0 +1,6 @@
+{
+    "type": "minecraft:crafting_shapeless",
+    "group": "dye_dust",
+    "ingredients": [{ "item": "amurians:purple_powder_dye" }],
+    "result": { "item": "amurians:purple_dye_dust", "count": 4 }
+}

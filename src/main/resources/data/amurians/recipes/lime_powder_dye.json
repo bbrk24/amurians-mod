@@ -1,0 +1,11 @@
+{
+    "type": "minecraft:crafting_shapeless",
+    "group": "powder_dye",
+    "ingredients": [
+        { "item": "amurians:lime_dye_dust" },
+        { "item": "amurians:lime_dye_dust" },
+        { "item": "amurians:lime_dye_dust" },
+        { "item": "amurians:lime_dye_dust" }
+    ],
+    "result": { "item": "amurians:lime_powder_dye" }
+}

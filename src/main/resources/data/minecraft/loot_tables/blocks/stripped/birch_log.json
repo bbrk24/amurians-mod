@@ -1,0 +1,58 @@
+{
+    "type": "minecraft:block",
+    "pools": [
+        {
+            "bonus_rolls": 0,
+            "entries": [
+                {
+                    "type": "minecraft:alternatives",
+                    "children": [
+                        {
+                            "type": "minecraft:item",
+                            "conditions": [
+                                {
+                                    "condition": "minecraft:match_tool",
+                                    "predicate": {
+                                        "enchantments": [
+                                            {
+                                                "enchantment": "minecraft:silk_touch",
+                                                "levels": { "min": 1 }
+                                            }
+                                        ]
+                                    }
+                                }
+                            ],
+                            "name": "amurians:birch_bark"
+                        },
+                        {
+                            "type": "minecraft:alternatives",
+                            "children": [
+                                {
+                                    "type": "minecraft:item",
+                                    "conditions": [
+                                        {
+                                            "chances": [0.16666667, 0.3073877, 0.38, 0.46666667],
+                                            "condition": "minecraft:table_bonus",
+                                            "enchantment": "minecraft:fortune"
+                                        }
+                                    ],
+                                    "functions": [
+                                        {
+                                            "enchantment": "minecraft:fortune",
+                                            "formula": "minecraft:binomial_with_bonus_count",
+                                            "function": "minecraft:apply_bonus",
+                                            "parameters": { "extra": 0, "probability": 0.375 }
+                                        }
+                                    ],
+                                    "name": "amurians:birch_bark"
+                                },
+                                { "type": "minecraft:empty" }
+                            ]
+                        }
+                    ]
+                }
+            ],
+            "rolls": 1
+        }
+    ]
+}

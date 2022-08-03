@@ -1,0 +1,11 @@
+{
+    "type": "minecraft:crafting_shapeless",
+    "group": "powder_dye",
+    "ingredients": [
+        { "item": "amurians:green_dye_dust" },
+        { "item": "amurians:green_dye_dust" },
+        { "item": "amurians:green_dye_dust" },
+        { "item": "amurians:green_dye_dust" }
+    ],
+    "result": { "item": "amurians:green_powder_dye" }
+}

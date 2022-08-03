@@ -1,0 +1,11 @@
+{
+    "type": "minecraft:crafting_shapeless",
+    "group": "powder_dye",
+    "ingredients": [
+        { "item": "amurians:black_dye_dust" },
+        { "item": "amurians:black_dye_dust" },
+        { "item": "amurians:black_dye_dust" },
+        { "item": "amurians:black_dye_dust" }
+    ],
+    "result": { "item": "amurians:black_powder_dye" }
+}

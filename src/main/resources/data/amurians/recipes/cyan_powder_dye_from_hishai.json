@@ -1,0 +1,7 @@
+{
+    "type": "minecraft:smelting",
+    "cookingtime": 200,
+    "experience": 0.4,
+    "ingredient": { "item": "amurians:hishai_fruit" },
+    "result": "amurians:cyan_powder_dye"
+}
