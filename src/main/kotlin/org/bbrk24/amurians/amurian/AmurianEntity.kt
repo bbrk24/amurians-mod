@@ -170,6 +170,14 @@ class AmurianEntity(entityType: EntityType<out AmurianEntity>, world: World) : M
         }
     }
 
+    // TODO: do anything with this
+    private fun restock() {
+        for (trade in this.getOffers()) {
+            trade.updateDemandBonus()
+            trade.resetUses()
+        }
+    }
+
     override fun fillRecipes() {
         val offers = this.offers ?: return
         val newOffers = AmurianTradeProvider.getOffersForMerchant(
@@ -180,8 +188,8 @@ class AmurianEntity(entityType: EntityType<out AmurianEntity>, world: World) : M
             random
         )
         for (offerPair in newOffers) {
-            merchantData.offerIDs.add(offerPair.getFirst())
-            offers.add(offerPair.getSecond())
+            merchantData.offerIDs.add(offerPair.first)
+            offers.add(offerPair.second)
         }
     }
 
@@ -200,7 +208,6 @@ class AmurianEntity(entityType: EntityType<out AmurianEntity>, world: World) : M
         }
         if (
             !(
-                merchantData.profession == Profession.UNEMPLOYED ||
                 getOffers().isEmpty() ||
                 world.isClient
             )
@@ -254,15 +261,6 @@ class AmurianEntity(entityType: EntityType<out AmurianEntity>, world: World) : M
             return true
         }
         return false
-    }
-
-    override fun canEquip(stack: ItemStack): Boolean {
-        if (stack.getItem() is ArmorItem) {
-            return false
-        }
-        val equipmentSlot = getPreferredEquipmentSlot(stack)
-        val itemStack = getEquippedStack(equipmentSlot)
-        return prefersNewEquipment(stack, itemStack)
     }
 
     override fun prefersNewEquipment(newStack: ItemStack, oldStack: ItemStack): Boolean {

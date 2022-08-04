@@ -19,6 +19,8 @@ package org.bbrk24.amurians.amurian.trade
 import kotlin.math.min
 
 import net.minecraft.enchantment.EnchantmentHelper
+import net.minecraft.enchantment.EnchantmentLevelEntry
+import net.minecraft.item.EnchantedBookItem
 import net.minecraft.item.ItemConvertible
 import net.minecraft.item.ItemStack
 import net.minecraft.item.Items
@@ -31,7 +33,7 @@ import net.minecraft.village.TradeOffer
 import org.bbrk24.amurians.Initializer
 import org.bbrk24.amurians.amurian.AmurianEntity
 
-private const val PRICE_MULTIPLIER = 1.0f
+private const val PRICE_MULTIPLIER = 0.2f
 
 private fun lowXPForLevel(level: Int) = when (level) {
     1 -> 1
@@ -67,10 +69,10 @@ private object TradeItemHelper {
         )
     }
 
-    fun makeTippedArrowTrade(
+    inline fun makeTippedArrowTrade(
         count: Int,
         price: Int,
-        calcXP: (Int) -> Int
+        crossinline calcXP: (Int) -> Int
     ): (Random, Int) -> TradeOffer {
         val arrows = Registry.POTION.stream()
             .filter { !it.getEffects().isEmpty() && BrewingRecipeRegistry.isBrewable(it) }
@@ -88,6 +90,32 @@ private object TradeItemHelper {
                 PRICE_MULTIPLIER
             )
         }
+    }
+
+    private val allEnchants = Registry.ENCHANTMENT.stream()
+        .filter { it.isAvailableForEnchantedBookOffer() }
+        .toList()
+
+    fun makeEnchantedBookTrade(random: Random, merchantLevel: Int): TradeOffer {
+        val enchantment = allEnchants[random.nextInt(allEnchants.size)]
+        val maxLevel = enchantment.getMaxLevel()
+        val level = if (maxLevel == 1) 1 else random.nextBetween((maxLevel + 1) / 2, maxLevel)
+        val bookStack = EnchantedBookItem.forEnchantment(
+            EnchantmentLevelEntry(enchantment, level)
+        )
+
+        var cost = 2 + (3 * level) + random.nextInt(5 + (level * 10))
+        if (enchantment.isTreasure()) {
+            cost *= 2
+        }
+
+        return TradeOffer(
+            ItemStack(Initializer.RUBY, min(cost, 64)),
+            bookStack,
+            12,
+            highXPForLevel(merchantLevel),
+            PRICE_MULTIPLIER
+        )
     }
 }
 
@@ -318,19 +346,15 @@ internal object TradeEntries {
                 )
             }
         ),
-        TradeEntry(
-            "buy_oak_boat",
-            { it == AmurianEntity.BiomeGroup.MODERATE },
-            { _, level ->
-                TradeOffer(
-                    ItemStack(Items.OAK_BOAT),
-                    ItemStack(Initializer.RUBY),
-                    12,
-                    lowXPForLevel(level),
-                    PRICE_MULTIPLIER
-                )
-            }
-        ),
+        TradeEntry("buy_oak_boat") { _, level ->
+            TradeOffer(
+                ItemStack(Items.OAK_BOAT),
+                ItemStack(Initializer.RUBY),
+                12,
+                lowXPForLevel(level),
+                PRICE_MULTIPLIER
+            )
+        },
         TradeEntry(
             "buy_birch_boat",
             { it == AmurianEntity.BiomeGroup.MODERATE },
@@ -539,5 +563,177 @@ internal object TradeEntries {
             "sell_enchanted_diamond_sword",
             TradeItemHelper.makeEnchantedItemTrade(Items.DIAMOND_SWORD, 8, ::highXPForLevel)
         )
+    )
+    val SELLING_CROPS = listOf(
+        TradeEntry("sell_beetroot") { _, level ->
+            TradeOffer(
+                ItemStack(Initializer.RUBY),
+                ItemStack(Items.BEETROOT, 15),
+                16,
+                lowXPForLevel(level),
+                PRICE_MULTIPLIER
+            )
+        },
+        TradeEntry("sell_baked_potato") { random, level ->
+            TradeOffer(
+                ItemStack(Initializer.RUBY),
+                ItemStack(Items.BAKED_POTATO, random.nextBetween(21, 25)),
+                16,
+                highXPForLevel(level),
+                PRICE_MULTIPLIER
+            )
+        },
+        TradeEntry("sell_wheat") { _, level ->
+            TradeOffer(
+                ItemStack(Initializer.RUBY),
+                ItemStack(Items.WHEAT, 20),
+                16,
+                lowXPForLevel(level),
+                PRICE_MULTIPLIER
+            )
+        },
+        TradeEntry(
+            "sell_sweet_berries",
+            { it == AmurianEntity.BiomeGroup.COLD },
+            { _, level ->
+                TradeOffer(
+                    ItemStack(Initializer.RUBY),
+                    ItemStack(Items.SWEET_BERRIES, 10),
+                    16,
+                    lowXPForLevel(level),
+                    PRICE_MULTIPLIER
+                )
+            }
+        ),
+        TradeEntry(
+            "sell_glow_berries",
+            { it == AmurianEntity.BiomeGroup.JUNGLE },
+            { _, level ->
+                TradeOffer(
+                    ItemStack(Initializer.RUBY),
+                    ItemStack(Items.GLOW_BERRIES, 10),
+                    12,
+                    lowXPForLevel(level),
+                    PRICE_MULTIPLIER
+                )
+            }
+        )
+    )
+    val BUYING_GOLD = listOf(
+        TradeEntry("buy_gold") { _, level ->
+            TradeOffer(
+                ItemStack(Items.GOLD_INGOT, 3),
+                ItemStack(Initializer.RUBY),
+                16,
+                lowXPForLevel(level),
+                PRICE_MULTIPLIER
+            )
+        }
+    )
+    val SELLING_ANIMAL_DROPS = listOf(
+        TradeEntry("sell_feather") { _, level ->
+            TradeOffer(
+                ItemStack(Initializer.RUBY),
+                ItemStack(Items.FEATHER, 24),
+                16,
+                lowXPForLevel(level),
+                PRICE_MULTIPLIER
+            )
+        },
+        TradeEntry(
+            "sell_rabbit_hide",
+            { it == AmurianEntity.BiomeGroup.COLD },
+            { _, level ->
+                TradeOffer(
+                    ItemStack(Initializer.RUBY),
+                    ItemStack(Items.RABBIT_HIDE, 9),
+                    16,
+                    highXPForLevel(level),
+                    PRICE_MULTIPLIER
+                )
+            }
+        ),
+        TradeEntry(
+            "sell_rabbit_foot",
+            { it == AmurianEntity.BiomeGroup.COLD },
+            { _, level ->
+                TradeOffer(
+                    ItemStack(Initializer.RUBY),
+                    ItemStack(Items.RABBIT_FOOT, 2),
+                    12,
+                    highXPForLevel(level),
+                    PRICE_MULTIPLIER
+                )
+            }
+        )
+    )
+    val SELLING_FISHING_TREASURE = listOf(
+        TradeEntry("sell_enchanted_book", TradeItemHelper::makeEnchantedBookTrade),
+        TradeEntry(
+            "sell_enchanted_fishing_rod",
+            TradeItemHelper.makeEnchantedItemTrade(Items.FISHING_ROD, 3, ::highXPForLevel)
+        ),
+        TradeEntry("sell_nautilus_shell") { _, _ ->
+            TradeOffer(
+                ItemStack(Initializer.RUBY, 6),
+                ItemStack(Items.NAUTILUS_SHELL),
+                12,
+                0,
+                PRICE_MULTIPLIER
+            )
+        }
+    )
+    val SELLING_MAX_WEAPONS = listOf(
+        TradeEntry("sell_tnt") { random, _ ->
+            TradeOffer(
+                ItemStack(Initializer.RUBY, random.nextBetween(6, 8)),
+                ItemStack(Items.TNT),
+                12,
+                0,
+                PRICE_MULTIPLIER
+            )
+        },
+        TradeEntry("sell_trident") { _, _ ->
+            TradeOffer(
+                ItemStack(Initializer.RUBY, 9),
+                ItemStack(Items.TRIDENT),
+                4,
+                0,
+                PRICE_MULTIPLIER
+            )
+        }
+    )
+    val SELLING_GILDED_FOOD = listOf(
+        TradeEntry("sell_golden_carrot") { _, _ ->
+            TradeOffer(
+                ItemStack(Initializer.RUBY),
+                ItemStack(Items.GOLDEN_CARROT),
+                16,
+                0,
+                PRICE_MULTIPLIER
+            )
+        },
+        TradeEntry(
+            "sell_glistering_melon_slice",
+            { it == AmurianEntity.BiomeGroup.JUNGLE || it == AmurianEntity.BiomeGroup.SAVANNA },
+            { _, _ ->
+                TradeOffer(
+                    ItemStack(Initializer.RUBY),
+                    ItemStack(Items.GLISTERING_MELON_SLICE, 2),
+                    16,
+                    0,
+                    PRICE_MULTIPLIER
+                )
+            }
+        ),
+        TradeEntry("sell_golden_apple") { _, _ ->
+            TradeOffer(
+                ItemStack(Initializer.RUBY),
+                ItemStack(Items.GOLDEN_APPLE),
+                12,
+                0,
+                PRICE_MULTIPLIER
+            )
+        }
     )
 }

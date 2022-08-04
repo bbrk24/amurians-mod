@@ -16,8 +16,6 @@
 
 package org.bbrk24.amurians.amurian.trade
 
-import com.mojang.datafixers.util.Pair
-
 import net.minecraft.util.math.random.Random
 import net.minecraft.village.TradeOffer
 
@@ -42,7 +40,10 @@ object AmurianTradeProvider {
         }.toMutableList()
         // if there's still too many, pick some randomly
         var chosenEntries: MutableList<TradeEntry>
-        if (validEntries.size <= amount) {
+        if (validEntries.size < amount) {
+            Initializer.LOGGER.warn(
+                "Too many trades requested ($amount requested, ${validEntries.size} possible)"
+            )
             chosenEntries = validEntries
         } else if (validEntries.size >= amount * 2) {
             chosenEntries = ArrayList(amount)
@@ -59,7 +60,7 @@ object AmurianTradeProvider {
         }
         // map it to the expected type
         return chosenEntries.map {
-            Pair.of(it.id, it.tradeGenerator(random, level))
+            Pair(it.id, it.tradeGenerator(random, level))
         }
     }
 
@@ -136,8 +137,8 @@ object AmurianTradeProvider {
                         TradeEntries.BUYING_FUEL
                     )
             }
-            3 -> when (profession) {
-                Profession.FISHERMAN -> return chooseOffers(
+            3 -> return when (profession) {
+                Profession.FISHERMAN -> chooseOffers(
                         random,
                         biome,
                         offers,
@@ -152,7 +153,7 @@ object AmurianTradeProvider {
                         1,
                         TradeEntries.BUYING_BOAT
                     )
-                Profession.BUTCHER -> return chooseOffers(
+                Profession.BUTCHER -> chooseOffers(
                         random,
                         biome,
                         offers,
@@ -160,7 +161,7 @@ object AmurianTradeProvider {
                         2,
                         TradeEntries.SELLING_MEAT
                     )
-                Profession.WEAPONSMITH -> return chooseOffers(
+                Profession.WEAPONSMITH -> chooseOffers(
                         random,
                         biome,
                         offers,
@@ -170,10 +171,17 @@ object AmurianTradeProvider {
                             TradeEntries.SELLING_LOW_RANGED_WEAPONS
                     )
                 // farmer
-                else -> Unit
+                else -> chooseOffers(
+                        random,
+                        biome,
+                        offers,
+                        3,
+                        2,
+                        TradeEntries.SELLING_CROPS
+                    )
             }
-            4 -> when (profession) {
-                Profession.FISHERMAN -> return chooseOffers(
+            4 -> return when (profession) {
+                Profession.FISHERMAN -> chooseOffers(
                         random,
                         biome,
                         offers,
@@ -181,7 +189,7 @@ object AmurianTradeProvider {
                         1,
                         TradeEntries.SELLING_FISHING_LEATHER
                     )
-                Profession.WEAPONSMITH -> return chooseOffers(
+                Profession.WEAPONSMITH -> chooseOffers(
                         random,
                         biome,
                         offers,
@@ -196,13 +204,76 @@ object AmurianTradeProvider {
                         1,
                         TradeEntries.SELLING_HIGH_RANGED_WEAPONS
                     )
-                // farmer or butcher
-                else -> Unit
+                Profession.FARMER -> chooseOffers(
+                        random,
+                        biome,
+                        offers,
+                        4,
+                        1,
+                        TradeEntries.BUYING_GOLD
+                    ) + chooseOffers(
+                        random,
+                        biome,
+                        offers,
+                        4,
+                        1,
+                        TradeEntries.SELLING_CROPS
+                    )
+                // butcher
+                else -> chooseOffers(
+                        random,
+                        biome,
+                        offers,
+                        4,
+                        1,
+                        TradeEntries.SELLING_ANIMAL_DROPS
+                    ) + chooseOffers(
+                        random,
+                        biome,
+                        offers,
+                        4,
+                        1,
+                        TradeEntries.SELLING_MEAT
+                    )
             }
-            5 -> Unit
+            5 -> return when (profession) {
+                Profession.FISHERMAN -> chooseOffers(
+                        random,
+                        biome,
+                        offers,
+                        5,
+                        2,
+                        TradeEntries.SELLING_FISHING_TREASURE
+                    )
+                Profession.BUTCHER -> chooseOffers(
+                        random,
+                        biome,
+                        offers,
+                        5,
+                        1,
+                        TradeEntries.SELLING_ANIMAL_DROPS
+                    )
+                Profession.WEAPONSMITH -> chooseOffers(
+                        random,
+                        biome,
+                        offers,
+                        5,
+                        2,
+                        TradeEntries.SELLING_MAX_WEAPONS
+                    )
+                // farmer
+                else -> chooseOffers(
+                        random,
+                        biome,
+                        offers,
+                        5,
+                        1,
+                        TradeEntries.SELLING_GILDED_FOOD
+                    )
+            }
             else -> throw IllegalArgumentException("Merchant level must be between 1 and 5 (inclusive)")
         }
-        Initializer.LOGGER.warn("getOffersForMerchant() fell through, returning empty list")
-        return emptyList()
+        // Initializer.LOGGER.warn("getOffersForMerchant() fell through, returning empty list")
+        // return emptyList()
     }
 }
