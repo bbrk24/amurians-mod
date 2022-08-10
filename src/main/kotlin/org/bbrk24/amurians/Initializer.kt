@@ -37,9 +37,12 @@ import net.minecraft.block.StairsBlock
 import net.minecraft.entity.EntityDimensions
 import net.minecraft.entity.EquipmentSlot
 import net.minecraft.entity.SpawnGroup
+import net.minecraft.entity.effect.StatusEffectInstance
+import net.minecraft.entity.effect.StatusEffects
 import net.minecraft.item.AliasedBlockItem
 import net.minecraft.item.ArmorItem
 import net.minecraft.item.BlockItem
+import net.minecraft.item.FoodComponent
 import net.minecraft.item.FoodComponents
 import net.minecraft.item.Item
 import net.minecraft.item.ItemConvertible
@@ -49,6 +52,7 @@ import net.minecraft.recipe.RecipeType
 import net.minecraft.screen.ScreenHandlerType
 import net.minecraft.sound.BlockSoundGroup
 import net.minecraft.util.Identifier
+import net.minecraft.util.Rarity
 import net.minecraft.util.math.Direction.Axis
 import net.minecraft.util.registry.Registry
 
@@ -66,11 +70,50 @@ private val STRIPPED_AZALEA_SETTINGS = FabricBlockSettings.of(Material.WOOD, AZA
     .strength(2.0f)
     .sounds(BlockSoundGroup.WOOD)
 
+private val LESSER_GAPPLE_COMPONENT = FoodComponent.Builder()
+    .hunger(4)
+    .saturationModifier(1.2f)
+    .alwaysEdible()
+    .statusEffect(StatusEffectInstance(StatusEffects.REGENERATION, 600, 0), 1.0f)
+    .build()
+
 class Initializer : ModInitializer {
     companion object {
         @JvmStatic
         val LOGGER = LoggerFactory.getLogger("amurians")
 
+<<<<<<< HEAD
+=======
+        // items
+        val RUBY = Item(FabricItemSettings().group(ItemGroup.MISC))
+        val RUBY_SHARD = Item(FabricItemSettings().group(ItemGroup.MISC))
+        val RUBY_HELMET = ArmorItem(
+            RubyMaterial,
+            EquipmentSlot.HEAD,
+            FabricItemSettings().group(ItemGroup.COMBAT)
+        )
+        val RUBY_CHESTPLATE = ArmorItem(
+            RubyMaterial,
+            EquipmentSlot.CHEST,
+            FabricItemSettings().group(ItemGroup.COMBAT)
+        )
+        val RUBY_LEGGINGS = ArmorItem(
+            RubyMaterial,
+            EquipmentSlot.LEGS,
+            FabricItemSettings().group(ItemGroup.COMBAT)
+        )
+        val RUBY_BOOTS = ArmorItem(
+            RubyMaterial,
+            EquipmentSlot.FEET,
+            FabricItemSettings().group(ItemGroup.COMBAT)
+        )
+        val LESSER_GOLDEN_APPLE = Item(
+            FabricItemSettings().group(ItemGroup.FOOD)
+                .rarity(Rarity.UNCOMMON)
+                .food(LESSER_GAPPLE_COMPONENT)
+        )
+
+>>>>>>> 6ee4a12 (Begin adding lesser gapple)
         // blocks
         val RUBY_BLOCK = Block(
             FabricBlockSettings.of(Material.METAL, MapColor.PINK)
@@ -206,8 +249,12 @@ class Initializer : ModInitializer {
         registerItem(RUBY_CHESTPLATE, "ruby_chestplate")
         registerItem(RUBY_LEGGINGS, "ruby_leggings")
         registerItem(RUBY_BOOTS, "ruby_boots")
+<<<<<<< HEAD
         registerItem(HISHAI_FRUIT, "hishai_fruit")
         registerItem(HISHAI_SEEDS, "hishai_seeds")
+=======
+        registerItem(LESSER_GOLDEN_APPLE, "lesser_golden_apple")
+>>>>>>> 6ee4a12 (Begin adding lesser gapple)
 
         FuelRegistry.INSTANCE.add(AZALEA_FENCE, 300)
         FuelRegistry.INSTANCE.add(AZALEA_FENCE_GATE, 300)

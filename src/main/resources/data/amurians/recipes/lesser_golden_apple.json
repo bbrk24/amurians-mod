@@ -1,0 +1,6 @@
+{
+    "type": "minecraft:crafting_shaped",
+    "pattern": ["GGG", "GAG", "GGG"],
+    "key": { "G": { "item": "minecraft:gold_nugget" }, "A": { "item": "minecraft:apple" } },
+    "result": { "item": "amurians:lesser_golden_apple" }
+}
