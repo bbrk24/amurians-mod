@@ -86,8 +86,8 @@ public class EmeryTableScreen extends HandledScreen<EmeryTableScreenHandler> {
                 ++l
             ) {
                 int m = l - this.scrollOffset;
-                int n = this.x + 52 + m % 4 * 16;
-                int o = this.y + 14 + m / 4 * 18 + 2;
+                int n = this.x + 52 + (m % 4) * 16;
+                int o = this.y + 16 + (m / 4) * 18;
                 if (x < n || x >= n + 16 || y < o || y >= o + 18) {
                     continue;
                 }
@@ -110,7 +110,7 @@ public class EmeryTableScreen extends HandledScreen<EmeryTableScreenHandler> {
             ++i
         ) {
             int j = i - this.scrollOffset;
-            int k = x + j % 4 * 16;
+            int k = x + (j % 4) * 16;
             int m = y + (j / 4) * 18 + 2;
             int n = this.backgroundHeight;
             if (i == this.handler.getSelectedRecipe()) {
@@ -218,7 +218,7 @@ public class EmeryTableScreen extends HandledScreen<EmeryTableScreenHandler> {
     }
 
     protected int getMaxScroll() {
-        return (this.handler.getAvailableRecipeCount() + 4 - 1) / 4 - 3;
+        return (this.handler.getAvailableRecipeCount() + 3) / 4 - 3;
     }
 
     private void onInventoryChange() {
