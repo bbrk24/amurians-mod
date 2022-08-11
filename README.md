@@ -3,7 +3,7 @@
 This mod adds the following things to the game:
 - Rubies, ruby blocks, and ruby armor
 - The emery table, a crafting block akin to the stonecutter but with a different purpose
-- Azalea wood (WIP: missing door, trapdoor, and boat)
+- Azalea wood (WIP: missing boat; missing/placeholder bark, door, & trapdoor textures)
 - Amurians, as a mob (heavily WIP)
 - Hishai, a plant found in the sparse jungle, which can be used for food and dyes
 

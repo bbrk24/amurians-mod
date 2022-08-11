@@ -26,14 +26,7 @@ import net.fabricmc.fabric.api.`object`.builder.v1.entity.FabricEntityTypeBuilde
 import net.fabricmc.fabric.api.registry.CompostingChanceRegistry
 import net.fabricmc.fabric.api.registry.FuelRegistry
 import net.fabricmc.fabric.api.registry.StrippableBlockRegistry
-import net.minecraft.block.Block
-import net.minecraft.block.FenceBlock
-import net.minecraft.block.FenceGateBlock
-import net.minecraft.block.MapColor
-import net.minecraft.block.Material
-import net.minecraft.block.PillarBlock
-import net.minecraft.block.SlabBlock
-import net.minecraft.block.StairsBlock
+import net.minecraft.block.*
 import net.minecraft.entity.EntityDimensions
 import net.minecraft.entity.EquipmentSlot
 import net.minecraft.entity.SpawnGroup
@@ -44,6 +37,8 @@ import net.minecraft.item.FoodComponents
 import net.minecraft.item.Item
 import net.minecraft.item.ItemConvertible
 import net.minecraft.item.ItemGroup
+import net.minecraft.item.SignItem
+import net.minecraft.item.TallBlockItem
 import net.minecraft.recipe.RecipeSerializer
 import net.minecraft.recipe.RecipeType
 import net.minecraft.screen.ScreenHandlerType
@@ -65,11 +60,17 @@ private val AZALEA_PLANKS_SETTINGS = FabricBlockSettings.of(Material.WOOD, AZALE
 private val STRIPPED_AZALEA_SETTINGS = FabricBlockSettings.of(Material.WOOD, AZALEA_WOOD_COLOR)
     .strength(2.0f)
     .sounds(BlockSoundGroup.WOOD)
+private val AZALEA_SIGN_SETTINGS = FabricBlockSettings.of(Material.WOOD, AZALEA_WOOD_COLOR)
+    .strength(1.0f)
+    .sounds(BlockSoundGroup.WOOD)
+    .noCollision()
 
 class Initializer : ModInitializer {
     companion object {
-        @JvmStatic
         val LOGGER = LoggerFactory.getLogger("amurians")
+
+        @JvmStatic
+        fun getLogger() = LOGGER
 
         // blocks
         val RUBY_BLOCK = Block(
@@ -105,6 +106,33 @@ class Initializer : ModInitializer {
         val AZALEA_STAIRS = StairsBlock(AZALEA_PLANKS.getDefaultState(), AZALEA_PLANKS_SETTINGS)
         val AZALEA_FENCE = FenceBlock(AZALEA_PLANKS_SETTINGS)
         val AZALEA_FENCE_GATE = FenceGateBlock(AZALEA_PLANKS_SETTINGS)
+        val AZALEA_DOOR = DoorBlock(
+            FabricBlockSettings.of(Material.WOOD, AZALEA_WOOD_COLOR)
+                .strength(3.0f)
+                .sounds(BlockSoundGroup.WOOD)
+                .nonOpaque()
+        )
+        val AZALEA_TRAPDOOR = TrapdoorBlock(
+            FabricBlockSettings.of(Material.WOOD, AZALEA_WOOD_COLOR)
+                .strength(3.0f)
+                .sounds(BlockSoundGroup.WOOD)
+                .nonOpaque()
+                .allowsSpawning { _, _, _, _ -> false }
+        )
+        val AZALEA_PRESSURE_PLATE = PressurePlateBlock(
+            PressurePlateBlock.ActivationRule.EVERYTHING,
+            FabricBlockSettings.of(Material.WOOD, AZALEA_WOOD_COLOR)
+                .strength(0.5f)
+                .sounds(BlockSoundGroup.WOOD)
+                .noCollision()
+        )
+        val AZALEA_BUTTON = WoodenButtonBlock(
+            FabricBlockSettings.of(Material.DECORATION)
+                .strength(0.5f)
+                .sounds(BlockSoundGroup.WOOD)
+                .noCollision()
+        )
+<<<<<<< HEAD
         val HISHAI_PLANT = HishaiBlock(
             FabricBlockSettings.of(Material.PLANT)
                 .strength(0.1f)
@@ -119,6 +147,39 @@ class Initializer : ModInitializer {
                 .nonOpaque()
                 .noCollision()
                 .dropsNothing()
+=======
+        val AZALEA_STANDING_SIGN = SignBlock(AZALEA_SIGN_SETTINGS, AzaleaSignType)
+        val AZALEA_WALL_SIGN = WallSignBlock(AZALEA_SIGN_SETTINGS, AzaleaSignType)
+
+        // items
+        val RUBY = Item(FabricItemSettings().group(ItemGroup.MISC))
+        val RUBY_SHARD = Item(FabricItemSettings().group(ItemGroup.MISC))
+        val RUBY_HELMET = ArmorItem(
+            RubyMaterial,
+            EquipmentSlot.HEAD,
+            FabricItemSettings().group(ItemGroup.COMBAT)
+        )
+        val RUBY_CHESTPLATE = ArmorItem(
+            RubyMaterial,
+            EquipmentSlot.CHEST,
+            FabricItemSettings().group(ItemGroup.COMBAT)
+        )
+        val RUBY_LEGGINGS = ArmorItem(
+            RubyMaterial,
+            EquipmentSlot.LEGS,
+            FabricItemSettings().group(ItemGroup.COMBAT)
+        )
+        val RUBY_BOOTS = ArmorItem(
+            RubyMaterial,
+            EquipmentSlot.FEET,
+            FabricItemSettings().group(ItemGroup.COMBAT)
+        )
+        val AZALEA_SIGN_ITEM = SignItem(
+            FabricItemSettings().maxCount(16)
+                .group(ItemGroup.DECORATIONS),
+            AZALEA_STANDING_SIGN,
+            AZALEA_WALL_SIGN
+>>>>>>> 504271b (begin work on sign, something's very wrong)
         )
 
         @JvmStatic
@@ -169,10 +230,19 @@ class Initializer : ModInitializer {
         val EMERY_TABLE_RECIPE_TYPE = RecipeType.register<EmeryTableRecipe>("amurians:emery_table")
     }
 
-    private fun registerBlock(block: Block, name: String, group: ItemGroup) {
+    private inline fun <T : Block> registerBlock(
+        block: T,
+        name: String,
+        group: ItemGroup,
+        itemGenerator: (T, FabricItemSettings) -> Item = ::BlockItem
+    ) {
         val id = Identifier("amurians", name)
         Registry.register(Registry.BLOCK, id, block)
-        Registry.register(Registry.ITEM, id, BlockItem(block, FabricItemSettings().group(group)))
+        Registry.register(
+            Registry.ITEM,
+            id,
+            itemGenerator(block, FabricItemSettings().group(group))
+        )
     }
 
     private fun registerItem(item: Item, name: String) {
@@ -192,9 +262,25 @@ class Initializer : ModInitializer {
         registerBlock(AZALEA_STAIRS, "azalea_stairs", ItemGroup.BUILDING_BLOCKS)
         registerBlock(AZALEA_FENCE, "azalea_fence", ItemGroup.DECORATIONS)
         registerBlock(AZALEA_FENCE_GATE, "azalea_fence_gate", ItemGroup.REDSTONE)
+<<<<<<< HEAD
+=======
+        registerBlock(AZALEA_TRAPDOOR, "azalea_trapdoor", ItemGroup.REDSTONE)
+        registerBlock(AZALEA_PRESSURE_PLATE, "azalea_pressure_plate", ItemGroup.REDSTONE)
+        registerBlock(AZALEA_BUTTON, "azalea_button", ItemGroup.REDSTONE)
 
-        Registry.register(Registry.BLOCK, Identifier("amurians", "hishai_plant"), HISHAI_PLANT)
-        Registry.register(Registry.BLOCK, Identifier("amurians", "hishai_top"), HISHAI_TOP)
+        registerBlock(AZALEA_DOOR, "azalea_door", ItemGroup.REDSTONE, ::TallBlockItem)
+>>>>>>> 3016cec (add pressure plate and begin adding button)
+
+        Registry.register(
+            Registry.BLOCK,
+            Identifier("amurians", "azalea_sign"),
+            AZALEA_STANDING_SIGN
+        )
+        Registry.register(
+            Registry.BLOCK,
+            Identifier("amurians", "azalea_wall_sign"),
+            AZALEA_WALL_SIGN
+        )
 
         StrippableBlockRegistry.register(AZALEA_LOG, STRIPPED_AZALEA_LOG)
         StrippableBlockRegistry.register(AZALEA_WOOD, STRIPPED_AZALEA_WOOD)
@@ -206,8 +292,12 @@ class Initializer : ModInitializer {
         registerItem(RUBY_CHESTPLATE, "ruby_chestplate")
         registerItem(RUBY_LEGGINGS, "ruby_leggings")
         registerItem(RUBY_BOOTS, "ruby_boots")
+<<<<<<< HEAD
         registerItem(HISHAI_FRUIT, "hishai_fruit")
         registerItem(HISHAI_SEEDS, "hishai_seeds")
+=======
+        registerItem(AZALEA_SIGN_ITEM, "azalea_sign")
+>>>>>>> 504271b (begin work on sign, something's very wrong)
 
         FuelRegistry.INSTANCE.add(AZALEA_FENCE, 300)
         FuelRegistry.INSTANCE.add(AZALEA_FENCE_GATE, 300)

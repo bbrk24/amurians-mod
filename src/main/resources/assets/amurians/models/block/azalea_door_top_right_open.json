@@ -1,0 +1,4 @@
+{
+    "parent": "minecraft:block/door_top_right_open",
+    "textures": { "top": "amurians:block/azalea_door_top" }
+}

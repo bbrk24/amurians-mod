@@ -1,0 +1,6 @@
+{
+    "variants": {
+        "powered=false": { "model": "amurians:block/azalea_pressure_plate" },
+        "powered=true": { "model": "amurians:block/azalea_pressure_plate_down" }
+    }
+}

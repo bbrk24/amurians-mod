@@ -1,0 +1,4 @@
+{
+    "parent": "minecraft:block/button",
+    "textures": { "texture": "amurians:block/azalea_planks" }
+}

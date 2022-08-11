@@ -1,0 +1,7 @@
+{
+    "type": "minecraft:crafting_shaped",
+    "group": "wooden_pressure_plate",
+    "pattern": ["##"],
+    "key": { "#": { "item": "amurians:azalea_planks" } },
+    "result": { "item": "amurians:azalea_pressure_plate" }
+}

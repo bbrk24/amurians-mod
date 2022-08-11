@@ -1,0 +1,4 @@
+{
+    "parent": "minecraft:block/pressure_plate_down",
+    "textures": { "texture": "amurians:block/azalea_planks" }
+}

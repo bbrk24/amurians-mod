@@ -1,0 +1,7 @@
+{
+    "type": "minecraft:crafting_shaped",
+    "group": "wooden_door",
+    "pattern": ["##", "##", "##"],
+    "key": { "#": { "item": "amurians:azalea_planks" } },
+    "result": { "item": "amurians:azalea_door", "count": 3 }
+}
