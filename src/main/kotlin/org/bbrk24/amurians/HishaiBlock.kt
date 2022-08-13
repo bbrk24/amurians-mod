@@ -113,6 +113,13 @@ class HishaiBlock(settings: Settings) : PlantBlock(settings), Fertilizable {
         return LARGE_COLLISION
     }
 
+    override fun getCameraCollisionShape(
+        state: BlockState,
+        world: BlockView,
+        pos: BlockPos,
+        ctx: ShapeContext
+    ) = getOutlineShape(state, world, pos, ctx)
+
     @Suppress("DEPRECATION")
     override fun onUse(
         state: BlockState,
@@ -137,4 +144,7 @@ class HishaiBlock(settings: Settings) : PlantBlock(settings), Fertilizable {
     override fun appendProperties(builder: StateManager.Builder<Block, BlockState>) {
         builder.add(AGE);
     }
+
+    // c'mon, let me use transparent pixels
+    override fun isTranslucent(state: BlockState, world: BlockView, pos: BlockPos) = true
 }

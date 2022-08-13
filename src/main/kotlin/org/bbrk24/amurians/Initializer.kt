@@ -122,6 +122,7 @@ class Initializer : ModInitializer {
                 .strength(0.2f)
                 .sounds(BlockSoundGroup.GRASS)
                 .ticksRandomly()
+                .nonOpaque()
         )
 
         @JvmStatic

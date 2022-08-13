@@ -1,0 +1,36 @@
+{
+    "ambientocclusion": false,
+    "textures": { "particle": "amurians:block/hishai_large" },
+    "elements": [
+        {
+            "from": [0.8, -1, 8],
+            "to": [15.2, 31, 8],
+            "rotation": {
+                "origin": [8, 8, 8],
+                "axis": "y",
+                "angle": 45,
+                "rescale": true
+            },
+            "shade": false,
+            "faces": {
+                "north": { "uv": [8, 0, 16, 16], "texture": "#particle" },
+                "south": { "uv": [8, 0, 16, 16], "texture": "#particle" }
+            }
+        },
+        {
+            "from": [8, -1, 0.8],
+            "to": [8, 31, 15.2],
+            "rotation": {
+                "origin": [8, 8, 8],
+                "axis": "y",
+                "angle": 45,
+                "rescale": true
+            },
+            "shade": false,
+            "faces": {
+                "west": { "uv": [8, 0, 16, 16], "texture": "#particle" },
+                "east": { "uv": [8, 0, 16, 16], "texture": "#particle" }
+            }
+        }
+    ]
+}
