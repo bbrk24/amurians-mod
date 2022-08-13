@@ -45,7 +45,11 @@ private val MEDIUM_COLLISION = Block.createCuboidShape(7.0, 0.0, 7.0, 9.0, 16.0,
 private val LARGE_COLLISION = Block.createCuboidShape(6.0, 0.0, 6.0, 10.0, 24.0, 10.0)
 
 internal fun dropFruit(world: World, pos: BlockPos) {
-    Block.dropStack(world, pos, ItemStack(Initializer.HISHAI_FRUIT))
+    Block.dropStack(
+        world,
+        pos,
+        ItemStack(Initializer.HISHAI_FRUIT, world.random.nextBetween(1, 3))
+    )
 }
 
 class HishaiBlock(settings: Settings) : PlantBlock(settings), Fertilizable {

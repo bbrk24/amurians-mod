@@ -7,6 +7,7 @@ import net.fabricmc.fabric.api.item.v1.FabricItemSettings
 import net.fabricmc.fabric.api.`object`.builder.v1.block.FabricBlockSettings
 import net.fabricmc.fabric.api.`object`.builder.v1.entity.FabricDefaultAttributeRegistry
 import net.fabricmc.fabric.api.`object`.builder.v1.entity.FabricEntityTypeBuilder
+import net.fabricmc.fabric.api.registry.CompostingChanceRegistry
 import net.fabricmc.fabric.api.registry.FuelRegistry
 import net.fabricmc.fabric.api.registry.StrippableBlockRegistry
 import net.minecraft.block.Block
@@ -190,6 +191,9 @@ class Initializer : ModInitializer {
 
         FuelRegistry.INSTANCE.add(AZALEA_FENCE, 300)
         FuelRegistry.INSTANCE.add(AZALEA_FENCE_GATE, 300)
+
+        CompostingChanceRegistry.INSTANCE.add(HISHAI_FRUIT, 0.65f)
+        CompostingChanceRegistry.INSTANCE.add(HISHAI_PLANT, 0.3f)
 
         // entities
         FabricDefaultAttributeRegistry.register(AMURIAN, AmurianEntity.createAmurianAttributes())
