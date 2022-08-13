@@ -1,4 +1,4 @@
-package org.bbrk24.amurians
+package org.bbrk24.amurians.hishai
 
 import kotlin.math.min
 
@@ -8,8 +8,8 @@ import net.minecraft.block.Fertilizable
 import net.minecraft.block.PlantBlock
 import net.minecraft.block.ShapeContext
 import net.minecraft.entity.player.PlayerEntity
-import net.minecraft.item.ItemStack
 import net.minecraft.item.Items
+import net.minecraft.item.ItemStack
 import net.minecraft.server.world.ServerWorld
 import net.minecraft.state.StateManager
 import net.minecraft.state.property.Properties
@@ -27,20 +27,26 @@ import net.minecraft.world.BlockView
 import net.minecraft.world.World
 import net.minecraft.world.event.GameEvent
 
+import org.bbrk24.amurians.Initializer
+
 private val LAND_BLOCKS = TagKey.of(Registry.BLOCK_KEY, Identifier("amurians", "hishai_plantable"))
 
-private val AGE = Properties.AGE_15
-private const val MAX_AGE = 15
-private const val MEDIUM_CUTOFF_AGE = 4
-private const val LARGE_CUTOFF_AGE = 10
+internal val AGE = Properties.AGE_15
+internal const val MAX_AGE = 15
+internal const val MEDIUM_CUTOFF_AGE = 4
+internal const val LARGE_CUTOFF_AGE = 10
 
 private val SMALL_OUTLINE = Block.createCuboidShape(5.0, 0.0, 5.0, 11.0, 8.0, 11.0)
 private val MEDIUM_OUTLINE = Block.createCuboidShape(2.0, 0.0, 2.0, 14.0, 15.0, 14.0)
-private val LARGE_OUTLINE = Block.createCuboidShape(1.0, 0.0, 1.0, 15.0, 24.0, 15.0)
+private val LARGE_OUTLINE = Block.createCuboidShape(1.0, 0.0, 1.0, 15.0, 16.0, 15.0)
 
 private val SMALL_COLLISION = VoxelShapes.empty()
-private val MEDIUM_COLLISION = Block.createCuboidShape(6.0, 0.0, 6.0, 10.0, 16.0, 10.0)
+private val MEDIUM_COLLISION = Block.createCuboidShape(7.0, 0.0, 7.0, 9.0, 16.0, 9.0)
 private val LARGE_COLLISION = Block.createCuboidShape(6.0, 0.0, 6.0, 10.0, 24.0, 10.0)
+
+internal fun dropFruit(world: World, pos: BlockPos) {
+    Block.dropStack(world, pos, ItemStack(Initializer.HISHAI_FRUIT))
+}
 
 class HishaiBlock(settings: Settings) : PlantBlock(settings), Fertilizable {
     init {
@@ -48,6 +54,35 @@ class HishaiBlock(settings: Settings) : PlantBlock(settings), Fertilizable {
             stateManager.getDefaultState()
                 .with(AGE, 0)
         )
+    }
+
+    private fun shouldGrow(state: BlockState, pos: BlockPos, world: World): Boolean {
+        if (state.get(AGE) >= MAX_AGE) {
+            return false
+        }
+        val abovePos = pos.up()
+        if (!world.isInBuildLimit(abovePos)) {
+            return false
+        }
+        val aboveState = world.getBlockState(abovePos)
+
+        return (aboveState.isAir() || aboveState.isOf(Initializer.HISHAI_TOP)) &&
+            world.getBaseLightLevel(abovePos, 0) >= 9
+    }
+
+    private fun growBy(state: BlockState, world: ServerWorld, pos: BlockPos, amount: Int) {
+        val newAge = min(state.get(AGE) + amount, MAX_AGE)
+        world.setBlockState(pos, state.with(AGE, newAge), Block.NOTIFY_LISTENERS)
+
+        if (newAge == MAX_AGE) {
+            world.setBlockState(
+                pos.up(),
+                Initializer.HISHAI_TOP.getDefaultState()
+                    .with(Properties.BERRIES, true)
+            )
+        } else if (newAge >= LARGE_CUTOFF_AGE) {
+            world.setBlockState(pos.up(), Initializer.HISHAI_TOP.getDefaultState())
+        }
     }
 
     override fun canPlantOnTop(floor: BlockState, world: BlockView, pos: BlockPos): Boolean {
@@ -62,22 +97,26 @@ class HishaiBlock(settings: Settings) : PlantBlock(settings), Fertilizable {
     ) = true
 
     override fun canGrow(world: World, random: Random, pos: BlockPos, state: BlockState): Boolean {
-        return state.get(AGE) < MAX_AGE
+        return shouldGrow(state, pos, world)
     }
 
     override fun grow(world: ServerWorld, random: Random, pos: BlockPos, state: BlockState) {
-        val age = state.get(AGE)
-        val toAdd = random.nextBetween(2, 3)
-        world.setBlockState(pos, state.with(AGE, min(age + toAdd, MAX_AGE)), Block.NOTIFY_LISTENERS)
+        growBy(state, world, pos, random.nextBetween(2, 3))
     }
 
     override fun hasRandomTicks(state: BlockState) = state.get(AGE) < MAX_AGE
 
     override fun randomTick(state: BlockState, world: ServerWorld, pos: BlockPos, random: Random) {
         val age = state.get(AGE)
-        if (age < MAX_AGE && world.getBaseLightLevel(pos.up(), 0) >= 9) {
-            world.setBlockState(pos, state.with(AGE, age + 1), Block.NOTIFY_LISTENERS)
+        if (shouldGrow(state, pos, world)) {
+            growBy(state, world, pos, 1)
             world.emitGameEvent(GameEvent.BLOCK_CHANGE, pos, GameEvent.Emitter.of(state))
+            val abovePos = pos.up()
+            world.emitGameEvent(
+                GameEvent.BLOCK_CHANGE,
+                abovePos,
+                GameEvent.Emitter.of(world.getBlockState(abovePos))
+            )
         }
     }
 
@@ -120,7 +159,6 @@ class HishaiBlock(settings: Settings) : PlantBlock(settings), Fertilizable {
         ctx: ShapeContext
     ) = getOutlineShape(state, world, pos, ctx)
 
-    @Suppress("DEPRECATION")
     override fun onUse(
         state: BlockState,
         world: World,
@@ -129,14 +167,13 @@ class HishaiBlock(settings: Settings) : PlantBlock(settings), Fertilizable {
         hand: Hand,
         hit: BlockHitResult
     ): ActionResult {
-        if (player.getStackInHand(hand).isOf(Items.BONE_MEAL)) {
+        val age = state.get(AGE)
+        if (state.get(AGE) < MAX_AGE) {
             return ActionResult.PASS
         }
-        if (state.get(AGE) < MAX_AGE) {
-            return super.onUse(state, world, pos, player, hand, hit)
-        }
-        Block.dropStack(world, pos, ItemStack(Initializer.HISHAI_FRUIT))
+        dropFruit(world, pos)
         world.setBlockState(pos, state.with(AGE, LARGE_CUTOFF_AGE), Block.NOTIFY_LISTENERS)
+        world.setBlockState(pos.up(), Initializer.HISHAI_TOP.getDefaultState())
         world.emitGameEvent(GameEvent.BLOCK_CHANGE, pos, GameEvent.Emitter.of(state))
         return ActionResult.success(world.isClient)
     }

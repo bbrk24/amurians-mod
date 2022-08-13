@@ -1,4 +1,4 @@
 {
-    "parent": "amurians:block/template_hishai_small",
+    "parent": "amurians:block/template_hishai",
     "textures": { "texture": "amurians:block/hishai_small" }
 }

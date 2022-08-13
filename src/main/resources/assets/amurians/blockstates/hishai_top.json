@@ -1,0 +1,6 @@
+{
+    "variants": {
+        "berries=true": { "model": "amurians:block/hishai_top_ripe" },
+        "berries=false": { "model": "amurians:block/hishai_top_unripe" }
+    }
+}

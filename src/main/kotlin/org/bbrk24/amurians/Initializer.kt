@@ -35,10 +35,8 @@ import net.minecraft.util.math.Direction.Axis
 import net.minecraft.util.registry.Registry
 
 import org.bbrk24.amurians.amurian.AmurianEntity
-import org.bbrk24.amurians.emerytable.EmeryTableBlock
-import org.bbrk24.amurians.emerytable.EmeryTableRecipe
-import org.bbrk24.amurians.emerytable.EmeryTableRecipeSerializer
-import org.bbrk24.amurians.emerytable.EmeryTableScreenHandler
+import org.bbrk24.amurians.emerytable.*
+import org.bbrk24.amurians.hishai.*
 
 private val AZALEA_BARK_COLOR = MapColor.SPRUCE_BROWN
 private val AZALEA_WOOD_COLOR = MapColor.PALE_YELLOW
@@ -124,6 +122,14 @@ class Initializer : ModInitializer {
                 .ticksRandomly()
                 .nonOpaque()
         )
+        val HISHAI_TOP = HishaiTopBlock(
+            FabricBlockSettings.of(Material.PLANT)
+                .strength(0.2f)
+                .sounds(BlockSoundGroup.GRASS)
+                .nonOpaque()
+                .noCollision()
+                .dropsNothing()
+        )
 
         @JvmStatic
         fun getAzaleaLog(): Block = AZALEA_LOG
@@ -163,6 +169,7 @@ class Initializer : ModInitializer {
         registerBlock(AZALEA_FENCE_GATE, "azalea_fence_gate", ItemGroup.REDSTONE)
 
         Registry.register(Registry.BLOCK, Identifier("amurians", "hishai_plant"), HISHAI_PLANT)
+        Registry.register(Registry.BLOCK, Identifier("amurians", "hishai_top"), HISHAI_TOP)
         Registry.register(
             Registry.ITEM,
             Identifier("amurians", "hishai_seeds"),
