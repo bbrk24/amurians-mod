@@ -20,8 +20,10 @@ import net.minecraft.block.StairsBlock
 import net.minecraft.entity.EntityDimensions
 import net.minecraft.entity.EquipmentSlot
 import net.minecraft.entity.SpawnGroup
+import net.minecraft.item.AliasedBlockItem
 import net.minecraft.item.ArmorItem
 import net.minecraft.item.BlockItem
+import net.minecraft.item.FoodComponents
 import net.minecraft.item.Item
 import net.minecraft.item.ItemGroup
 import net.minecraft.recipe.RecipeSerializer
@@ -76,6 +78,10 @@ class Initializer : ModInitializer {
             EquipmentSlot.FEET,
             FabricItemSettings().group(ItemGroup.COMBAT)
         )
+        val HISHAI_FRUIT = Item(
+            FabricItemSettings().group(ItemGroup.FOOD)
+                .food(FoodComponents.APPLE)
+        )
 
         // blocks
         val RUBY_BLOCK = Block(
@@ -111,6 +117,12 @@ class Initializer : ModInitializer {
         val AZALEA_STAIRS = StairsBlock(AZALEA_PLANKS.getDefaultState(), AZALEA_PLANKS_SETTINGS)
         val AZALEA_FENCE = FenceBlock(AZALEA_PLANKS_SETTINGS)
         val AZALEA_FENCE_GATE = FenceGateBlock(AZALEA_PLANKS_SETTINGS)
+        val HISHAI_PLANT = HishaiBlock(
+            FabricBlockSettings.of(Material.PLANT)
+                .strength(0.2f)
+                .sounds(BlockSoundGroup.GRASS)
+                .ticksRandomly()
+        )
 
         @JvmStatic
         fun getAzaleaLog(): Block = AZALEA_LOG
@@ -149,6 +161,13 @@ class Initializer : ModInitializer {
         registerBlock(AZALEA_FENCE, "azalea_fence", ItemGroup.DECORATIONS)
         registerBlock(AZALEA_FENCE_GATE, "azalea_fence_gate", ItemGroup.REDSTONE)
 
+        Registry.register(Registry.BLOCK, Identifier("amurians", "hishai_plant"), HISHAI_PLANT)
+        Registry.register(
+            Registry.ITEM,
+            Identifier("amurians", "hishai_seeds"),
+            AliasedBlockItem(HISHAI_PLANT, FabricItemSettings().group(ItemGroup.MISC))
+        )
+
         StrippableBlockRegistry.register(AZALEA_LOG, STRIPPED_AZALEA_LOG)
         StrippableBlockRegistry.register(AZALEA_WOOD, STRIPPED_AZALEA_WOOD)
 
@@ -159,6 +178,7 @@ class Initializer : ModInitializer {
         registerItem(RUBY_CHESTPLATE, "ruby_chestplate")
         registerItem(RUBY_LEGGINGS, "ruby_leggings")
         registerItem(RUBY_BOOTS, "ruby_boots")
+        registerItem(HISHAI_FRUIT, "hishai_fruit")
 
         FuelRegistry.INSTANCE.add(AZALEA_FENCE, 300)
         FuelRegistry.INSTANCE.add(AZALEA_FENCE_GATE, 300)
