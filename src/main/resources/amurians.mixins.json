@@ -3,7 +3,7 @@
     "minVersion": "0.8",
     "package": "org.bbrk24.amurians.mixins",
     "compatibilityLevel": "JAVA_17",
-    "mixins": ["TreeConfiguredFeaturesMixin", "LayFrogSpawnTaskMixin"],
+    "mixins": ["TreeConfiguredFeaturesMixin", "LayFrogSpawnTaskMixin", "HishaiPlantFeature"],
     "injectors": {
         "defaultRequire": 1
     }
