@@ -1,0 +1,5 @@
+{
+    "type": "minecraft:crafting_shapeless",
+    "ingredients": [{ "item": "amurians:hishai_fruit" }],
+    "result": { "item": "amurians:hishai_seeds", "count": 4 }
+}
