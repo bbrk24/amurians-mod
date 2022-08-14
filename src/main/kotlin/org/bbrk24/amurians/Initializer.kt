@@ -26,6 +26,7 @@ import net.minecraft.item.ArmorItem
 import net.minecraft.item.BlockItem
 import net.minecraft.item.FoodComponents
 import net.minecraft.item.Item
+import net.minecraft.item.ItemConvertible
 import net.minecraft.item.ItemGroup
 import net.minecraft.recipe.RecipeSerializer
 import net.minecraft.recipe.RecipeType
@@ -53,34 +54,6 @@ class Initializer : ModInitializer {
     companion object {
         @JvmStatic
         val LOGGER = LoggerFactory.getLogger("amurians")
-
-        // items
-        val RUBY = Item(FabricItemSettings().group(ItemGroup.MISC))
-        val RUBY_SHARD = Item(FabricItemSettings().group(ItemGroup.MISC))
-        val RUBY_HELMET = ArmorItem(
-            RubyMaterial,
-            EquipmentSlot.HEAD,
-            FabricItemSettings().group(ItemGroup.COMBAT)
-        )
-        val RUBY_CHESTPLATE = ArmorItem(
-            RubyMaterial,
-            EquipmentSlot.CHEST,
-            FabricItemSettings().group(ItemGroup.COMBAT)
-        )
-        val RUBY_LEGGINGS = ArmorItem(
-            RubyMaterial,
-            EquipmentSlot.LEGS,
-            FabricItemSettings().group(ItemGroup.COMBAT)
-        )
-        val RUBY_BOOTS = ArmorItem(
-            RubyMaterial,
-            EquipmentSlot.FEET,
-            FabricItemSettings().group(ItemGroup.COMBAT)
-        )
-        val HISHAI_FRUIT = Item(
-            FabricItemSettings().group(ItemGroup.FOOD)
-                .food(FoodComponents.APPLE)
-        )
 
         // blocks
         val RUBY_BLOCK = Block(
@@ -135,6 +108,41 @@ class Initializer : ModInitializer {
         @JvmStatic
         fun getAzaleaLog(): Block = AZALEA_LOG
 
+        // items
+        val RUBY = Item(FabricItemSettings().group(ItemGroup.MISC))
+        val RUBY_SHARD = Item(FabricItemSettings().group(ItemGroup.MISC))
+        val RUBY_HELMET = ArmorItem(
+            RubyMaterial,
+            EquipmentSlot.HEAD,
+            FabricItemSettings().group(ItemGroup.COMBAT)
+        )
+        val RUBY_CHESTPLATE = ArmorItem(
+            RubyMaterial,
+            EquipmentSlot.CHEST,
+            FabricItemSettings().group(ItemGroup.COMBAT)
+        )
+        val RUBY_LEGGINGS = ArmorItem(
+            RubyMaterial,
+            EquipmentSlot.LEGS,
+            FabricItemSettings().group(ItemGroup.COMBAT)
+        )
+        val RUBY_BOOTS = ArmorItem(
+            RubyMaterial,
+            EquipmentSlot.FEET,
+            FabricItemSettings().group(ItemGroup.COMBAT)
+        )
+        val HISHAI_FRUIT = Item(
+            FabricItemSettings().group(ItemGroup.FOOD)
+                .food(FoodComponents.APPLE)
+        )
+        val HISHAI_SEEDS = AliasedBlockItem(
+            HISHAI_PLANT,
+            FabricItemSettings().group(ItemGroup.MISC)
+        )
+
+        @JvmStatic
+        fun getHishaiSeeds(): ItemConvertible = HISHAI_SEEDS
+
         // entities
         val AMURIAN = FabricEntityTypeBuilder.create(SpawnGroup.CREATURE, ::AmurianEntity)
             .dimensions(EntityDimensions.fixed(0.6f, 1.8f))
@@ -171,11 +179,6 @@ class Initializer : ModInitializer {
 
         Registry.register(Registry.BLOCK, Identifier("amurians", "hishai_plant"), HISHAI_PLANT)
         Registry.register(Registry.BLOCK, Identifier("amurians", "hishai_top"), HISHAI_TOP)
-        Registry.register(
-            Registry.ITEM,
-            Identifier("amurians", "hishai_seeds"),
-            AliasedBlockItem(HISHAI_PLANT, FabricItemSettings().group(ItemGroup.MISC))
-        )
 
         StrippableBlockRegistry.register(AZALEA_LOG, STRIPPED_AZALEA_LOG)
         StrippableBlockRegistry.register(AZALEA_WOOD, STRIPPED_AZALEA_WOOD)
@@ -188,6 +191,7 @@ class Initializer : ModInitializer {
         registerItem(RUBY_LEGGINGS, "ruby_leggings")
         registerItem(RUBY_BOOTS, "ruby_boots")
         registerItem(HISHAI_FRUIT, "hishai_fruit")
+        registerItem(HISHAI_SEEDS, "hishai_seeds")
 
         FuelRegistry.INSTANCE.add(AZALEA_FENCE, 300)
         FuelRegistry.INSTANCE.add(AZALEA_FENCE_GATE, 300)

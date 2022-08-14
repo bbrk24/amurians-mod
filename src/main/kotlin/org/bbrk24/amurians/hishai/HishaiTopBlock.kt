@@ -89,7 +89,7 @@ class HishaiTopBlock(settings: Settings) : Block(settings), Fertilizable {
     }
 
     override fun getPickStack(world: BlockView, pos: BlockPos, state: BlockState): ItemStack {
-        return ItemStack(Initializer.HISHAI_PLANT)
+        return ItemStack(Initializer.HISHAI_SEEDS)
     }
 
     override fun onBreak(world: World, pos: BlockPos, state: BlockState, player: PlayerEntity) {
