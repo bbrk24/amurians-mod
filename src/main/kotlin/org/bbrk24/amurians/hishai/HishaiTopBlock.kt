@@ -65,9 +65,6 @@ class HishaiTopBlock(settings: Settings) : Block(settings), Fertilizable {
         ctx: ShapeContext
     ) = OUTLINE
 
-    // why does this not work
-    override fun isTranslucent(state: BlockState, world: BlockView, pos: BlockPos) = true
-
     @Suppress("DEPRECATION")
     override fun onUse(
         state: BlockState,
@@ -107,6 +104,7 @@ class HishaiTopBlock(settings: Settings) : Block(settings), Fertilizable {
         }
     }
 
+    @Suppress("DEPRECATION")
     override fun getStateForNeighborUpdate(
         state: BlockState,
         direction: Direction,

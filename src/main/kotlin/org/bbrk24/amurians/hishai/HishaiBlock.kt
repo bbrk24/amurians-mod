@@ -117,7 +117,6 @@ class HishaiBlock(settings: Settings) : PlantBlock(settings), Fertilizable {
     override fun hasRandomTicks(state: BlockState) = state.get(AGE) < MAX_AGE
 
     override fun randomTick(state: BlockState, world: ServerWorld, pos: BlockPos, random: Random) {
-        val age = state.get(AGE)
         if (shouldGrow(state, pos, world)) {
             growBy(state, world, pos, 1)
             world.emitGameEvent(GameEvent.BLOCK_CHANGE, pos, GameEvent.Emitter.of(state))
@@ -177,7 +176,6 @@ class HishaiBlock(settings: Settings) : PlantBlock(settings), Fertilizable {
         hand: Hand,
         hit: BlockHitResult
     ): ActionResult {
-        val age = state.get(AGE)
         if (state.get(AGE) < MAX_AGE) {
             return ActionResult.PASS
         }
@@ -191,9 +189,6 @@ class HishaiBlock(settings: Settings) : PlantBlock(settings), Fertilizable {
     override fun appendProperties(builder: StateManager.Builder<Block, BlockState>) {
         builder.add(AGE);
     }
-
-    // c'mon, let me use transparent pixels
-    override fun isTranslucent(state: BlockState, world: BlockView, pos: BlockPos) = true
 
     override fun onBreak(world: World, pos: BlockPos, state: BlockState, player: PlayerEntity) {
         if (state.get(AGE) >= LARGE_CUTOFF_AGE) {
@@ -214,6 +209,7 @@ class HishaiBlock(settings: Settings) : PlantBlock(settings), Fertilizable {
         }
     }
 
+    @Suppress("DEPRECATION")
     override fun getStateForNeighborUpdate(
         state: BlockState,
         direction: Direction,

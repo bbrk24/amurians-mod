@@ -3,10 +3,12 @@ package org.bbrk24.amurians
 import net.fabricmc.api.ClientModInitializer
 import net.fabricmc.api.EnvType
 import net.fabricmc.api.Environment
+import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap
 import net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry
 import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry
 import net.minecraft.client.gui.screen.ingame.HandledScreens
 import net.minecraft.client.model.TexturedModelData
+import net.minecraft.client.render.RenderLayer
 import net.minecraft.client.render.entity.model.EntityModelLayer
 import net.minecraft.client.render.entity.model.VillagerResemblingModel
 import net.minecraft.util.Identifier
@@ -26,5 +28,8 @@ class Client : ClientModInitializer {
         )
 
         HandledScreens.register(Initializer.EMERY_TABLE_SCREEN_HANDLER_TYPE, ::EmeryTableScreen)
+
+        BlockRenderLayerMap.INSTANCE.putBlock(Initializer.HISHAI_PLANT, RenderLayer.getCutout())
+        BlockRenderLayerMap.INSTANCE.putBlock(Initializer.HISHAI_TOP, RenderLayer.getCutout())
     }
 }
