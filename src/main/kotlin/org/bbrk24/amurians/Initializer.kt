@@ -53,7 +53,10 @@ import net.minecraft.util.math.Direction.Axis
 import net.minecraft.util.registry.Registry
 
 import org.bbrk24.amurians.amurian.AmurianEntity
-import org.bbrk24.amurians.emerytable.*
+import org.bbrk24.amurians.emerytable.EmeryTableBlock
+import org.bbrk24.amurians.emerytable.EmeryTableRecipe
+import org.bbrk24.amurians.emerytable.EmeryTableRecipeSerializer
+import org.bbrk24.amurians.emerytable.EmeryTableScreenHandler
 import org.bbrk24.amurians.hishai.*
 
 private val AZALEA_BARK_COLOR = MapColor.SPRUCE_BROWN
